@@ -1,0 +1,377 @@
+*{
+    box-sizing:border-box;
+}
+
+
+html,body,#root{
+
+    width:100%;
+    height:100%;
+
+    margin:0;
+    padding:0;
+
+}
+
+
+body{
+
+    font-family:Arial,sans-serif;
+
+}
+
+
+
+/* CONTENEDOR PRINCIPAL */
+
+.mobile-container{
+
+    width:100%;
+    height:100vh;
+
+
+    background:#E0E0E0;
+
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+
+
+/* CABECERA */
+
+.header{
+
+    background:#0E4021;
+
+    color:white;
+
+    text-align:center;
+
+
+    padding:2vh;
+
+
+}
+
+
+.header h1{
+
+    margin:0;
+
+    font-size:clamp(25px,4vw,45px);
+
+}
+
+
+
+/* CONTENIDO */
+
+.content{
+
+    flex:1;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:flex-start;
+
+    gap:20px;
+
+    padding:20px;
+
+    overflow-y:auto;
+
+}
+
+
+
+/* IMAGEN */
+
+
+.image-circle{
+
+
+    width:35vw;
+
+    height:35vw;
+
+
+    max-width:350px;
+
+    max-height:350px;
+
+
+    min-width:180px;
+
+    min-height:180px;
+
+
+    border-radius:50%;
+
+
+    overflow:hidden;
+
+
+}
+
+
+.image-circle img{
+
+
+    width:100%;
+
+    height:100%;
+
+
+    object-fit:cover;
+
+
+}
+
+
+
+/* BOTONES */
+
+
+.btn{
+
+
+    width:40vw;
+
+    max-width:300px;
+
+    min-width:200px;
+
+
+    padding:15px;
+
+
+    background:#24A01C;
+
+
+    color:white;
+
+
+    border:0;
+
+
+    font-size:clamp(16px,2vw,22px);
+
+
+    font-weight:bold;
+
+
+    border-radius:8px;
+
+
+}
+
+
+.btn-focused{
+
+
+    outline:3px solid #0076FF;
+
+}
+.image-rounded-container{
+
+width:310px;
+height:340px;
+
+border-radius:40px;
+
+overflow:hidden;
+
+box-shadow:0 4px 12px rgba(0,0,0,.3);
+
+margin-top:10px;
+
+}
+
+
+.image-rounded-container img{
+
+width:100%;
+height:100%;
+
+object-fit:cover;
+
+}
+
+
+.button-row{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:20px;
+    width:100%;
+}
+
+.button-row .btn{
+    flex:none;
+}
+
+
+
+.footer-bar{
+
+height:25px;
+
+background:#0E4021;
+
+width:100%;
+
+}
+/* DIAGNOSTICO */
+
+.diagnostico{
+
+    padding:10px;
+
+}
+
+
+
+.estado{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    margin-bottom:10px;
+
+}
+
+
+.estado p{
+
+    margin:3px 0;
+
+    font-size:16px;
+
+}
+
+
+
+.circulo{
+
+    width:18px;
+
+    height:18px;
+
+    background:#21d33b;
+
+    border-radius:50%;
+
+    display:block;
+
+}
+
+
+
+
+.imagen-diagnostico{
+
+    width:100%;
+
+    height:280px;
+
+    overflow:hidden;
+
+    border-radius:45px;
+
+    margin-bottom:20px;
+
+}
+
+
+
+.imagen-diagnostico img{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+
+}
+
+
+
+
+
+.recomendacion{
+
+    margin-top:20px;
+
+}
+
+
+
+.recomendacion h3{
+
+    margin-bottom:5px;
+
+}
+
+
+
+.recomendacion p{
+
+    font-size:16px;
+
+    line-height:1.4;
+
+    font-weight:500;
+
+}
+
+
+
+.button-row{
+
+    display:flex;
+
+    justify-content:space-around;
+
+    margin-top:20px;
+
+}
+
+
+
+.btn{
+
+    background:#16a516;
+
+    color:white;
+
+    border:none;
+
+    padding:14px 20px;
+
+    font-size:18px;
+
+    font-weight:bold;
+
+    border-radius:3px;
+
+    cursor:pointer;
+
+}
+
+
+.btn:hover{
+
+    background:#128512;
+
+}

@@ -1,0 +1,17 @@
+# Logs
+*.log
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Editores
+.vscode/
+
+# Python
+__pycache__/
+*.pyc
+
+# Modelos temporales
+*.keras
+*.h5
