@@ -5,6 +5,7 @@ import MenuU from "./pages/Menu";
 import Diagnostico from "./pages/Diagnostico";
 import Resultado from "./pages/Resultado";
 import Carga from "./pages/Carga";
+import Prehistorial from "./pages/Prehistorial.jsx";
 
 
 function App(){
@@ -36,12 +37,17 @@ function App(){
           path="/carga" 
           element={<Carga />}
         />
-
-
+        
         <Route 
-          path="/resultado" 
-          element={<Resultado />}
+          path="/diagnostico" 
+          element={<Diagnostico />}
         />
+
+         <Route 
+          path="/prehistorial" 
+          element={<Prehistorial />}
+        />
+        
 
       </Routes>
 

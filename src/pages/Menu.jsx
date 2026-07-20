@@ -59,7 +59,7 @@ Cámara
 
 <button 
 className="btn"
-onClick={()=>alert("Historial no implementado")}
+onClick={()=>navigate("/prehistorial")}
 >
 Historial
 </button>

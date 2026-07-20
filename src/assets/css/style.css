@@ -375,3 +375,221 @@ width:100%;
     background:#128512;
 
 }
+/* BUSCADOR */
+
+.search-row{
+
+    display:flex;
+    align-items:center;
+    gap:10px;
+    width:100%;
+
+}
+
+
+
+.search-box{
+
+    display:flex;
+
+    align-items:center;
+
+    background:white;
+
+    border-radius:20px;
+
+    padding:3px;
+
+    flex:1;
+
+}
+
+
+
+.btn-buscar{
+
+    background:#24A01C;
+
+    color:white;
+
+    border:none;
+
+    padding:6px 12px;
+
+    border-radius:15px;
+
+    font-weight:bold;
+
+}
+
+
+
+.input-buscar{
+
+    border:none;
+
+    outline:none;
+
+    width:100%;
+
+    padding:5px;
+
+}
+
+
+
+/* CALENDARIO */
+
+.btn-calendar{
+
+    width:35px;
+
+    height:35px;
+
+    background:white;
+
+    border-radius:8px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    cursor:pointer;
+
+    position:relative;
+
+}
+
+
+.btn-calendar input{
+
+    position:absolute;
+
+    opacity:0;
+
+    width:100%;
+
+    height:100%;
+
+    cursor:pointer;
+
+}
+
+
+
+
+/* TARJETAS */
+
+
+.history-list{
+
+    width:100%;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:12px;
+
+}
+
+
+
+.history-card{
+
+    background:white;
+
+    border-radius:10px;
+
+    padding:8px 12px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    box-shadow:0 2px 5px rgba(0,0,0,.2);
+
+}
+
+
+
+.history-info{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+}
+
+
+
+.history-title{
+
+    font-size:12px;
+
+    color:#333;
+
+}
+
+
+
+.icon-documento{
+
+    font-size:20px;
+
+}
+
+
+
+
+.btn-download{
+
+    width:28px;
+
+    height:28px;
+
+    border-radius:50%;
+
+    border:none;
+
+    background:#24A01C;
+
+    color:white;
+
+    font-size:20px;
+
+    font-weight:bold;
+
+}
+
+
+
+.footer-controls{
+
+    margin-top:auto;
+
+    width:100%;
+
+}
+
+
+
+.btn-regresar{
+
+    background:#24A01C;
+
+    color:white;
+
+    border:none;
+
+    padding:10px 15px;
+
+    font-weight:bold;
+
+}
