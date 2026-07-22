@@ -6,7 +6,7 @@ import Diagnostico from "./pages/Diagnostico";
 import Resultado from "./pages/Resultado";
 import Carga from "./pages/Carga";
 import Prehistorial from "./pages/Prehistorial.jsx";
-
+import Reporte from "./pages/Reporte";
 
 function App(){
 
@@ -46,6 +46,11 @@ function App(){
          <Route 
           path="/prehistorial" 
           element={<Prehistorial />}
+        />
+
+        <Route 
+          path="/reporte" 
+          element={<Reporte />}
         />
         
 
