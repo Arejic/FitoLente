@@ -28,3 +28,6 @@ npm run dev
 Local: http://localhost:5173/
 
 Abrir esa dirección en el navegador.
+
+##base datos:
+npm install firebase
