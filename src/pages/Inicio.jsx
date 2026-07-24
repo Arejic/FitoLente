@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router-dom";
 
-
 function Inicio(){
 
 const navigate = useNavigate();
 
 
 return (
+    
 
 <div className="mobile-container">
 
@@ -28,7 +28,7 @@ FitoLente
 <div className="image-circle">
 
 <img
-src="https://picsum.photos/id/106/500/500"
+src="/src/assets/img/col.png"
 alt="Planta"
 />
 

@@ -38,7 +38,7 @@ Cambio de usuario
 <div className="image-circle">
 
 <img
-src="https://picsum.photos/id/106/500/500"
+src="/src/assets/img/col.png"
 alt="Planta"
 />
 
