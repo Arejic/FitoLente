@@ -1,21 +1,48 @@
-import { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { 
+    useEffect, 
+    useRef, 
+    useState 
+} from "react";
+
+import { 
+    useLocation, 
+    useNavigate 
+} from "react-router-dom";
+
+
 import { analizarImagen } from "../services/ia";
-import { guardarDiagnostico } from "../services/firestore";
 
 
-function Diagnostico() {
+import { 
+    guardarDiagnostico 
+} from "../services/firestore";
+
+
+
+function Diagnostico(){
 
 
     const navigate = useNavigate();
+
     const location = useLocation();
+
     const imagenRef = useRef(null);
 
 
-    const [imagen, setImagen] = useState(null);
-    const [estado, setEstado] = useState("Preparando análisis...");
-    const [resultado, setResultado] = useState(null);
-    const [mostrarModal, setMostrarModal] = useState(false);
+
+    const [imagen,setImagen] = useState(null);
+
+    const [estado,setEstado] =
+        useState("Preparando análisis...");
+
+
+    const [resultado,setResultado] =
+        useState(null);
+
+
+    const [mostrarModal,setMostrarModal] =
+        useState(false);
+
 
 
 
@@ -25,87 +52,114 @@ function Diagnostico() {
 
 
 
-    useEffect(() => {
 
 
-        if (!location.state?.archivo) {
+    useEffect(()=>{
 
-            setEstado("No se recibió ninguna imagen");
+
+        if(!location.state?.archivo){
+
+            setEstado(
+                "No se recibió ninguna imagen"
+            );
 
             return;
 
         }
 
 
-        const archivo = location.state.archivo;
 
-        const url = URL.createObjectURL(archivo);
+        const archivo =
+            location.state.archivo;
+
+
+
+        const url =
+            URL.createObjectURL(archivo);
+
 
 
         setImagen(url);
 
 
+
         analizar(url);
 
 
-    }, [location.state]);
+
+    },[location.state]);
 
 
 
 
-    async function analizar(url) {
 
 
-        try {
+
+    async function analizar(url){
 
 
-            setEstado("Cargando inteligencia artificial...");
+        try{
 
 
-            await new Promise(resolve =>
-                setTimeout(resolve, 500)
+            setEstado(
+                "Cargando inteligencia artificial..."
             );
 
 
-            setEstado("Analizando imagen...");
+            await new Promise(
+                resolve=>setTimeout(resolve,500)
+            );
+
+
+            setEstado(
+                "Analizando imagen..."
+            );
 
 
 
-            const img = new Image();
-
-
-            img.src = url;
+            const img =
+                new Image();
 
 
 
-            img.onload = async () => {
+            img.src=url;
 
 
-                try {
+
+            img.onload = async()=>{
+
+
+                try{
 
 
                     imagenRef.current = img;
 
 
 
-                    const respuesta = await analizarImagen(img);
+                    const respuesta =
+                        await analizarImagen(img);
 
 
 
                     setResultado(respuesta);
 
 
-                    setEstado("Análisis completado");
+
+                    setEstado(
+                        "Análisis completado"
+                    );
 
 
 
-                } catch(error) {
+                }catch(error){
 
 
                     console.error(error);
 
 
-                    setEstado("Error al analizar imagen");
+                    setEstado(
+                        "Error al analizar imagen"
+                    );
 
 
                 }
@@ -115,26 +169,14 @@ function Diagnostico() {
 
 
 
-            img.onerror = () => {
-
-
-                setEstado(
-                    "No fue posible cargar la imagen."
-                );
-
-
-            };
-
-
-
-        } catch(error) {
+        }catch(error){
 
 
             console.error(error);
 
 
             setEstado(
-                "Error al analizar la imagen"
+                "Error al cargar imagen"
             );
 
 
@@ -146,59 +188,84 @@ function Diagnostico() {
 
 
 
-    async function generarReporte() {
-
-
-        try {
-
-
-            const datosPlaga =
-                obtenerInformacion(resultado.clase);
-
-
-
-           await guardarDiagnostico({
-
-    cultivo: "Col",
-
-    resultado: resultado.clase,
-
-    confianza: Number(resultado.confianza),
-
-    descripcion: datosPlaga.descripcion,
-
-    recomendacion: datosPlaga.recomendacion,
-
-    fecha: new Date().toISOString()
-
-});
 
 
 
 
-            navigate("/reporte", {
+
+    async function generarReporte(){
 
 
-                state: {
+        try{
 
 
-                    imagen,
+            if(!resultado)
+                return;
 
-                    resultado
 
 
-                }
+
+            const datos =
+                obtenerInformacion(
+                    resultado.clase
+                );
+
+
+
+
+            await guardarDiagnostico({
+
+                cultivo:"Col",
+
+                resultado:
+                resultado.clase,
+
+
+                confianza:
+                Number(resultado.confianza),
+
+
+                descripcion:
+                datos.descripcion,
+
+
+                recomendacion:
+                datos.recomendacion,
+
+
+                fecha:
+                new Date().toISOString()
 
 
             });
 
 
 
-        } catch(error) {
+
+
+            navigate(
+                "/reporte",
+                {
+
+                    state:{
+
+                        imagen,
+
+                        resultado
+
+                    }
+
+                }
+            );
+
+
+
+
+        }catch(error){
 
 
             console.error(
-                "Error guardando diagnóstico:",
+                "Error guardando reporte",
                 error
             );
 
@@ -211,274 +278,271 @@ function Diagnostico() {
 
 
 
-    function nuevaFoto() {
 
+
+
+    function nuevaFoto(){
 
         navigate("/carga");
-
 
     }
 
 
 
 
-    return (
 
 
-        <div className="mobile-container">
 
+return(
 
-            <header className="header">
 
+<div className="mobile-container">
 
-                <h1>FitoLente</h1>
 
 
-            </header>
+<header className="header">
 
+<h1>
+FitoLente
+</h1>
 
+</header>
 
 
-            <main className="content">
 
 
-                {
+<main className="content">
 
-                    imagen &&
 
 
-                    <div className="image-rounded-container">
+{
+imagen &&
 
+<div className="image-rounded-container">
 
-                        <img
-                            src={imagen}
-                            alt="Planta analizada"
-                        />
 
+<img
 
-                    </div>
+src={imagen}
 
+alt="Planta"
 
-                }
+/>
 
 
+</div>
 
 
+}
 
-                <h2>{estado}</h2>
 
 
 
+<h2>
 
+{estado}
 
-                {
+</h2>
 
-                    resultado &&
 
 
 
-                    <div className="resultado">
 
+{
+resultado &&
 
 
-                        <h3>Diagnóstico</h3>
+<div className="resultado">
 
 
-                        <p>
-                            🌱 {info.nombre}
-                        </p>
+<h3>
+Diagnóstico
+</h3>
 
 
+<p>
+🌱 {info.nombre}
+</p>
 
 
-                        <h3>Descripción</h3>
 
+<h3>
+Descripción
+</h3>
 
-                        <p>
-                            {info.descripcion}
-                        </p>
 
+<p>
+{info.descripcion}
+</p>
 
 
 
 
-                        <h3>Confianza</h3>
+<h3>
+Confianza
+</h3>
 
 
-                        <p>
-                            {Math.round(resultado.confianza)} %
-                        </p>
+<p>
 
+{Math.round(resultado.confianza)} %
 
+</p>
 
 
 
-                        <h3>Recomendación</h3>
 
+<h3>
+Recomendación
+</h3>
 
-                        <p>
-                            {info.recomendacion}
-                        </p>
 
+<p>
+{info.recomendacion}
+</p>
 
 
-                    </div>
 
+</div>
 
-                }
 
+}
 
 
 
 
-                <div className="button-row">
 
+<div className="button-row">
 
 
-                    <button
-                        className="btn"
-                        onClick={nuevaFoto}
-                    >
+<button
 
-                        Nueva foto
+className="btn"
 
-                    </button>
+onClick={nuevaFoto}
 
+>
 
+Nueva foto
 
+</button>
 
 
-                    <button
-                        className="btn"
-                        onClick={() => setMostrarModal(true)}
-                    >
 
-                        Menú
 
-                    </button>
+<button
 
+className="btn"
 
+onClick={()=>setMostrarModal(true)}
 
-                </div>
+>
 
+Menú
 
+</button>
 
 
-            </main>
+</div>
 
 
 
 
 
+</main>
 
-            {
 
-                mostrarModal &&
 
 
 
-                <div className="modal-fondo">
 
 
+{
+mostrarModal &&
 
-                    <div className="modal">
 
+<div className="modal-fondo">
 
 
-                        <h2>
+<div className="modal">
 
-                            ¿Desea generar un reporte antes de salir?
 
-                        </h2>
+<h2>
+¿Desea generar un reporte antes de salir?
+</h2>
 
 
 
+<p>
 
-                        <p>
+Si selecciona "Sí",
+se guardará el diagnóstico
+y abrirá el reporte PDF.
 
-                            Si selecciona "Sí", se guardará el diagnóstico
-                            y se abrirá el reporte PDF.
-                            Si selecciona "No", regresará al menú.
+</p>
 
-                        </p>
 
 
 
+<div className="modal-botones">
 
 
-                        <div className="modal-botones">
 
+<button
 
+className="btn"
 
+onClick={()=>navigate("/menu")}
 
+>
 
-                            <button
+No
 
-                                className="btn"
+</button>
 
-                                onClick={() => {
 
-                                    setMostrarModal(false);
 
-                                    navigate("/menu");
 
-                                }}
 
-                            >
+<button
 
-                                No
+className="btn"
 
-                            </button>
+onClick={generarReporte}
 
+>
 
+Sí
 
+</button>
 
 
 
 
-                            <button
+</div>
 
-                                className="btn"
 
-                                onClick={generarReporte}
 
-                            >
+</div>
 
-                                Sí
 
-                            </button>
+</div>
 
 
 
+}
 
 
-                        </div>
 
 
 
-                    </div>
+<div className="footer-bar"></div>
 
 
+</div>
 
-                </div>
 
-
-
-            }
-
-
-
-
-
-            <div className="footer-bar"></div>
-
-
-
-        </div>
-
-
-
-    );
+);
 
 
 }
@@ -488,102 +552,89 @@ function Diagnostico() {
 
 
 
-function obtenerInformacion(clase) {
+
+function obtenerInformacion(clase){
 
 
-    const informacion = {
+const datos={
 
 
-
-        sana: {
-
-            nombre:
-                "Planta sana",
-
-            descripcion:
-                "La planta no presenta síntomas visibles de enfermedades, plagas o deficiencias nutricionales.",
-
-            recomendacion:
-                "Continúe con los cuidados habituales y realice inspecciones periódicas."
-
-        },
-
-
-
-        trips: {
-
-            nombre:
-                "Trips",
-
-            descripcion:
-                "Plaga de pequeños insectos que dañan los tejidos de las hojas y afectan el desarrollo de la planta.",
-
-            recomendacion:
-                "Revise las hojas afectadas y aplique un control biológico o tratamiento autorizado."
-
-        },
-
-
-
-        pulgon: {
-
-            nombre:
-                "Pulgón",
-
-            descripcion:
-                "Insecto chupador que se alimenta de la savia y debilita la planta.",
-
-            recomendacion:
-                "Inspeccione los brotes nuevos y controle la población."
-
-        },
-
-
-
-        alternaria: {
-
-            nombre:
-                "Alternaria",
-
-            descripcion:
-                "Enfermedad causada por hongos que produce manchas oscuras en hojas.",
-
-            recomendacion:
-                "Retire hojas afectadas y reduzca humedad."
-
-        },
-
-    mildiu_velloso: {
-
-    nombre:
-        "Mildiu velloso",
-
-    descripcion:
-        "Enfermedad fúngica favorecida por ambientes húmedos y poca ventilación.",
-
-    recomendacion:
-        "Mejore la ventilación del cultivo, evite humedad excesiva en las hojas y aplique fungicida autorizado cuando sea necesario."
-
+sana:{
+nombre:"Planta sana",
+descripcion:"No presenta síntomas visibles.",
+recomendacion:"Continuar cuidados normales."
 },
 
-    };
+
+trips:{
+nombre:"Trips",
+descripcion:"Plaga que afecta tejidos de hojas.",
+recomendacion:"Aplicar control autorizado."
+},
+
+
+pulgon:{
+nombre:"Pulgón",
+descripcion:"Insecto que consume savia.",
+recomendacion:"Realizar monitoreo y control."
+},
+
+
+alternaria:{
+nombre:"Alternaria",
+descripcion:"Enfermedad causada por hongos.",
+recomendacion:"Eliminar hojas afectadas."
+},
+
+
+mildiu_velloso:{
+nombre:"Mildiu velloso",
+descripcion:"Enfermedad por exceso de humedad.",
+recomendacion:"Mejorar ventilación."
+},
+
+
+podredumbre_blanca:{
+nombre:"Podredumbre blanca",
+descripcion:"Pudrición causada por hongos.",
+recomendacion:"Eliminar partes afectadas."
+},
+
+
+hernia_col:{
+nombre:"Hernia de la col",
+descripcion:"Afecta raíces del cultivo.",
+recomendacion:"Realizar rotación."
+},
+
+
+deficiencia_n:{
+nombre:"Deficiencia de nitrógeno",
+descripcion:"Bajo nivel de nitrógeno.",
+recomendacion:"Aplicar fertilizante adecuado."
+},
+
+
+deficiencia_p:{
+nombre:"Deficiencia de fósforo",
+descripcion:"Bajo nivel de fósforo.",
+recomendacion:"Aplicar fertilización fosfatada."
+}
+
+
+};
 
 
 
-    return informacion[clase] || {
+return datos[clase] || {
 
+nombre:clase,
 
-        nombre: clase,
+descripcion:"Sin información.",
 
+recomendacion:"Consultar especialista."
 
-        descripcion:
-            "No existe información disponible para este diagnóstico.",
-
-
-        recomendacion:
-            "Consulte a un especialista."
-
-    };
+};
 
 
 }

@@ -1,61 +1,139 @@
-import { db } from "./firebase";
-import { 
-    collection, 
-    addDoc,
-    getDocs,
-    orderBy,
-    query
+import {
+
+collection,
+
+addDoc,
+
+getDocs,
+
+query,
+
+orderBy
+
 } from "firebase/firestore";
+
+
+
+import {
+    db
+} from "./firebase";
+
+
+
 
 
 export async function guardarDiagnostico(datos){
 
-    try{
 
-        const doc = await addDoc(
-            collection(db,"diagnosticos"),
-            datos
-        );
+try{
 
-        console.log("Guardado:",doc.id);
 
-        return doc.id;
+const docRef =
+await addDoc(
 
-    }catch(error){
+collection(
+db,
+"diagnosticos"
+),
 
-        console.error(error);
-        throw error;
-    }
+datos
+
+);
+
+
+
+return docRef.id;
+
+
+
+}catch(error){
+
+
+console.error(
+"Error guardando diagnóstico:",
+error
+);
+
+
+throw error;
+
 
 }
 
 
 
+}
+
+
+
+
+
+
+
 export async function obtenerDiagnosticos(){
 
-    try{
 
-        const q = query(
-            collection(db,"diagnosticos"),
-            orderBy("fecha","desc")
-        );
+try{
 
 
-        const snapshot = await getDocs(q);
+const q =
+query(
+
+collection(
+db,
+"diagnosticos"
+),
 
 
-        return snapshot.docs.map(doc=>({
+orderBy(
+"fecha",
+"desc"
+)
 
-            id:doc.id,
-            ...doc.data()
-
-        }));
+);
 
 
-    }catch(error){
 
-        console.error(error);
-        throw error;
-    }
+
+const snapshot =
+await getDocs(q);
+
+
+
+
+
+return snapshot.docs.map(doc=>(
+
+
+{
+
+id:doc.id,
+
+...doc.data()
+
+}
+
+
+
+));
+
+
+
+
+}catch(error){
+
+
+console.error(
+"Error obteniendo historial:",
+error
+);
+
+
+
+throw error;
+
+
+}
+
 
 }

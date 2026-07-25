@@ -1,5 +1,16 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {
+    useEffect,
+    useState
+} from "react";
+
+import {
+    useNavigate
+} from "react-router-dom";
+
+import {
+    obtenerDiagnosticos
+} from "../services/firestore";
+
 
 
 function Prehistorial(){
@@ -8,9 +19,66 @@ function Prehistorial(){
     const navigate = useNavigate();
 
 
-    const [fechaFiltro,setFechaFiltro] = useState("");
+    const [fechaFiltro,setFechaFiltro] =
+        useState("");
 
-    const [busqueda,setBusqueda] = useState("");
+    const [busqueda,setBusqueda] =
+        useState("");
+
+    const [historial,setHistorial] =
+        useState([]);
+
+
+
+
+
+    useEffect(()=>{
+
+
+        async function cargarHistorial(){
+
+
+            try{
+
+
+                const datos =
+                    await obtenerDiagnosticos();
+
+
+                console.log(
+                    "Historial:",
+                    datos
+                );
+
+
+                setHistorial(datos);
+
+
+
+            }catch(error){
+
+
+                console.error(
+                    "Error obteniendo historial:",
+                    error
+                );
+
+
+            }
+
+
+        }
+
+
+
+        cargarHistorial();
+
+
+
+    },[]);
+
+
+
 
 
 
@@ -22,41 +90,134 @@ function Prehistorial(){
 
 
 
-    const historial = [
-
-        {
-            fecha:"10/07/2029",
-            diagnostico:"Diagnóstico"
-        },
-
-    ];
 
 
 
 
-    const filtrados = historial.filter(item=>{
+function abrirReporte(item){
 
+    navigate("/reporte",{
 
-        return (
+        state:{
 
-            item.fecha.includes(fechaFiltro)
+            reporte:item
 
-            ||
-
-            item.diagnostico
-            .toLowerCase()
-            .includes(busqueda.toLowerCase())
-
-        );
-
+        }
 
     });
+
+}
+
+
+    }
+
+
+
+
+
+
+
+
+    function descargarReporte(item){
+
+
+        navigate("/reporte",{
+
+            state:{
+
+                reporte:item,
+
+                reconstruido:true,
+
+                descargar:true
+
+            }
+
+        });
+
+
+    }
+
+
+
+
+
+
+
+
+
+    const filtrados =
+
+        historial.filter(item=>{
+
+
+            const texto =
+
+                busqueda.toLowerCase();
+
+
+
+
+            const diagnostico =
+
+                (
+                    item.resultado || ""
+                )
+                .toLowerCase();
+
+
+
+
+
+            const coincideBusqueda =
+
+                diagnostico.includes(texto);
+
+
+
+
+
+
+            const coincideFecha =
+
+                fechaFiltro === ""
+
+                ||
+
+                (
+                    item.fecha || ""
+                )
+                .startsWith(fechaFiltro);
+
+
+
+
+
+
+            return (
+
+                coincideBusqueda
+
+                &&
+
+                coincideFecha
+
+            );
+
+
+
+        });
+
+
+
+
 
 
 
 
 
     return (
+
 
         <div className="mobile-container">
 
@@ -78,9 +239,8 @@ function Prehistorial(){
 
 
 
-
-
                 {/* BUSCADOR */}
+
 
                 <div className="search-row">
 
@@ -89,7 +249,12 @@ function Prehistorial(){
                     <div className="search-box">
 
 
-                        <button className="btn-buscar">
+
+                        <button
+
+                            className="btn-buscar"
+
+                        >
 
                             Buscar
 
@@ -97,17 +262,27 @@ function Prehistorial(){
 
 
 
+
+
                         <input
+
 
                             type="text"
 
+
                             className="input-buscar"
+
 
                             value={busqueda}
 
+
                             onChange={
-                                e=>setBusqueda(e.target.value)
+                                e=>
+                                setBusqueda(
+                                    e.target.value
+                                )
                             }
+
 
                         />
 
@@ -121,21 +296,30 @@ function Prehistorial(){
                     {/* CALENDARIO */}
 
 
+
                     <label className="btn-calendar">
 
 
                         📅
 
 
+
                         <input
+
 
                             type="date"
 
+
                             value={fechaFiltro}
 
+
                             onChange={
-                                e=>setFechaFiltro(e.target.value)
+                                e=>
+                                setFechaFiltro(
+                                    e.target.value
+                                )
                             }
+
 
                         />
 
@@ -152,6 +336,8 @@ function Prehistorial(){
 
 
 
+
+
                 {/* HISTORIAL */}
 
 
@@ -160,68 +346,95 @@ function Prehistorial(){
 
 
 
-                    {
-
-                    filtrados.map((item,index)=>(
+                {
 
 
+                filtrados.length === 0
 
-                        <div
+                ?
 
-                            className="history-card"
-
-                            key={index}
-
-                        >
-
+                <p>
+                    No hay reportes.
+                </p>
 
 
+                :
 
-                            <div className="history-info">
+
+                filtrados.map((item,index)=>(
 
 
 
-                                <span className="icon-documento">
+                    <div
 
-                                    📋
+                        className="history-card"
 
-                                </span>
-
-
-
-                                <span className="history-title">
+                        key={
+                            item.id || index
+                        }
 
 
-                                    {item.diagnostico}
-
-                                    {item.fecha}
-
-
-                                </span>
+                        onDoubleClick={()=>
+                            abrirReporte(item)
+                        }
 
 
-
-                            </div>
+                    >
 
 
 
 
 
-
-                            <button
-
-                                className="btn-download"
-
-                                title="Descargar reporte"
-
-                            >
+                        <div className="history-info">
 
 
-                                ↓
+
+                            <span className="icon-documento">
+
+                                📋
+
+                            </span>
 
 
-                            </button>
 
+
+                            <span className="history-title">
+
+
+
+                                <strong>
+
+                                    {item.resultado}
+
+                                </strong>
+
+
+
+                                <br/>
+
+
+                                Confianza:
+
+                                {
+                                    Math.round(
+                                        item.confianza
+                                    )
+                                }%
+
+
+
+                                <br/>
+
+                                {
+                                    new Date(
+                                        item.fecha
+                                    )
+                                    .toLocaleString()
+                                }
+
+
+
+                            </span>
 
 
 
@@ -229,13 +442,61 @@ function Prehistorial(){
 
 
 
-                    ))
 
-                    }
+
+
+                        <button
+
+
+                            className="btn-download"
+
+
+                            title="Descargar reporte"
+
+
+
+                            onClick={(e)=>{
+
+
+                                e.stopPropagation();
+
+
+                                descargarReporte(item);
+
+
+                            }}
+
+
+
+                        >
+
+
+                            ↓
+
+
+                        </button>
+
+
+
+
+
+
+                    </div>
+
+
+
+                ))
+
+
+                }
+
+
 
 
 
                 </div>
+
+
 
 
 
@@ -246,11 +507,14 @@ function Prehistorial(){
                 <div className="footer-controls">
 
 
+
                     <button
 
                         className="btn-regresar"
 
+
                         onClick={regresar}
+
 
                     >
 
@@ -260,7 +524,10 @@ function Prehistorial(){
                     </button>
 
 
+
                 </div>
+
+
 
 
 
@@ -283,6 +550,7 @@ function Prehistorial(){
 
 
 }
+
 
 
 export default Prehistorial;
