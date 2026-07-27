@@ -7,6 +7,8 @@ import Resultado from "./pages/Resultado";
 import Carga from "./pages/Carga";
 import Prehistorial from "./pages/Prehistorial.jsx";
 import Reporte from "./pages/Reporte";
+import Log from "./pages/Login";
+
 
 function App(){
 
@@ -18,9 +20,13 @@ function App(){
 
         <Route 
           path="/" 
-          element={<Inicio />}
+          element={<Log/>}
         />
 
+         <Route 
+          path="/Inicio" 
+          element={<Inicio />}
+        />
 
         <Route 
           path="/menu" 
@@ -52,6 +58,7 @@ function App(){
           path="/reporte" 
           element={<Reporte />}
         />
+     
         
 
       </Routes>

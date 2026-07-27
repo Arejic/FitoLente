@@ -1,17 +1,18 @@
 import {
 
-collection,
+    collection,
 
-addDoc,
+    addDoc,
 
-getDocs,
+    getDocs,
 
-query,
+    query,
 
-orderBy
+    where,
+
+    orderBy
 
 } from "firebase/firestore";
-
 
 
 import {
@@ -21,47 +22,428 @@ import {
 
 
 
+// =================================
+// USUARIOS
+// =================================
+
+
+
+export async function registrarUsuario(usuario){
+
+
+    const docRef =
+        await addDoc(
+
+            collection(
+                db,
+                "usuarios"
+            ),
+
+            usuario
+
+        );
+
+
+    return docRef.id;
+
+
+}
+
+
+
+
+
+
+
+
+export async function buscarUsuario(
+
+    nombre,
+
+    password,
+
+    perfil
+
+){
+
+
+
+    const q =
+        query(
+
+
+            collection(
+                db,
+                "usuarios"
+            ),
+
+
+
+            where(
+                "nombre",
+                "==",
+                nombre
+            ),
+
+
+
+            where(
+                "password",
+                "==",
+                password
+            ),
+
+
+
+            where(
+                "perfil",
+                "==",
+                perfil
+            )
+
+
+        );
+
+
+
+
+
+    const snapshot =
+        await getDocs(q);
+
+
+
+
+
+    if(snapshot.empty){
+
+        return null;
+
+    }
+
+
+
+
+
+    return {
+
+
+        id:
+        snapshot.docs[0].id,
+
+
+        ...snapshot.docs[0].data()
+
+
+    };
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// DIAGNOSTICOS
+// =================================
+
+
+
 
 export async function guardarDiagnostico(datos){
 
 
-try{
 
-
-const docRef =
-await addDoc(
-
-collection(
-db,
-"diagnosticos"
-),
-
-datos
-
-);
+    try{
 
 
 
-return docRef.id;
+        const usuario =
+            JSON.parse(
+                localStorage.getItem("usuario")
+            );
 
 
 
-}catch(error){
+        const diagnostico = {
 
 
-console.error(
-"Error guardando diagnóstico:",
-error
-);
+            ...datos,
 
 
-throw error;
+
+            perfil:
+            usuario?.perfil || "sin_perfil",
+
+
+
+            usuarioId:
+            usuario?.id || null,
+
+
+
+            fecha:
+            datos.fecha ||
+            new Date().toISOString()
+
+
+        };
+
+
+
+
+
+        const docRef =
+            await addDoc(
+
+
+                collection(
+                    db,
+                    "diagnosticos"
+                ),
+
+
+                diagnostico
+
+
+            );
+
+
+
+        return docRef.id;
+
+
+
+    }catch(error){
+
+
+
+        console.error(
+
+            "Error guardando diagnóstico:",
+
+            error
+
+        );
+
+
+
+        throw error;
+
+
+    }
+
+
+}
+
+
+
+
+
+
+
+// =================================
+// HISTORIAL POR PERFIL
+// =================================
+
+
+
+export async function obtenerDiagnosticosPerfil(perfil){
+
+
+    try{
+
+
+        const q = query(
+
+
+            collection(
+                db,
+                "diagnosticos"
+            ),
+
+
+
+            where(
+
+                "perfil",
+
+                "==",
+
+                perfil
+
+            ),
+
+
+
+            orderBy(
+
+                "fecha",
+
+                "desc"
+
+            )
+
+
+        );
+
+
+
+
+        const snapshot =
+            await getDocs(q);
+
+
+
+
+        return snapshot.docs.map(doc => ({
+
+
+            id:
+            doc.id,
+
+
+            ...doc.data()
+
+
+        }));
+
+
+
+    }catch(error){
+
+
+        console.error(
+
+            "Error historial perfil:",
+
+            error
+
+        );
+
+
+        throw error;
+
+
+    }
 
 
 }
 
 
 
+
+
+
+
+
+
+// =================================
+// HISTORIAL POR USUARIO
+// =================================
+
+
+
+export async function obtenerDiagnosticosUsuario(usuarioId){
+
+
+
+    try{
+
+
+
+        const q = query(
+
+
+
+            collection(
+                db,
+                "diagnosticos"
+            ),
+
+
+
+            where(
+
+                "usuarioId",
+
+                "==",
+
+                usuarioId
+
+            ),
+
+
+
+            orderBy(
+
+                "fecha",
+
+                "desc"
+
+            )
+
+
+
+        );
+
+
+
+
+
+
+        const snapshot =
+            await getDocs(q);
+
+
+
+
+
+
+        return snapshot.docs.map(doc => ({
+
+
+
+            id:
+            doc.id,
+
+
+            ...doc.data()
+
+
+
+        }));
+
+
+
+
+
+    }catch(error){
+
+
+
+        console.error(
+
+            "Error historial usuario:",
+
+            error
+
+        );
+
+
+
+        throw error;
+
+
+    }
+
+
+
 }
 
 
@@ -70,70 +452,97 @@ throw error;
 
 
 
-export async function obtenerDiagnosticos(){
 
 
-try{
-
-
-const q =
-query(
-
-collection(
-db,
-"diagnosticos"
-),
-
-
-orderBy(
-"fecha",
-"desc"
-)
-
-);
+// =================================
+// TODOS LOS DIAGNOSTICOS
+// =================================
 
 
 
-
-const snapshot =
-await getDocs(q);
+export async function obtenerTodosDiagnosticos(){
 
 
 
-
-
-return snapshot.docs.map(doc=>(
-
-
-{
-
-id:doc.id,
-
-...doc.data()
-
-}
+    try{
 
 
 
-));
+        const q = query(
+
+
+
+            collection(
+                db,
+                "diagnosticos"
+            ),
+
+
+
+            orderBy(
+
+                "fecha",
+
+                "desc"
+
+            )
+
+
+
+        );
 
 
 
 
-}catch(error){
-
-
-console.error(
-"Error obteniendo historial:",
-error
-);
 
 
 
-throw error;
+        const snapshot =
+            await getDocs(q);
 
 
-}
+
+
+
+
+
+        return snapshot.docs.map(doc => ({
+
+
+
+            id:
+            doc.id,
+
+
+            ...doc.data()
+
+
+
+        }));
+
+
+
+
+
+    }catch(error){
+
+
+
+        console.error(
+
+            "Error obteniendo diagnósticos:",
+
+            error
+
+        );
+
+
+
+        throw error;
+
+
+    }
+
 
 
 }

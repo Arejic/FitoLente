@@ -1,0 +1,95 @@
+.reporte-primaria{
+
+    width:90%;
+    max-width:480px;
+    margin:auto;
+
+    background:#2b2b2b;
+
+    color:white;
+
+    border-radius:15px;
+
+    overflow:hidden;
+
+}
+
+
+
+.reporte-primaria header{
+
+    background:#397800;
+
+    text-align:center;
+
+    padding:20px;
+
+}
+
+
+
+.reporte-primaria section{
+
+    padding:20px;
+
+}
+
+
+
+.reporte-primaria label{
+
+    color:#aaa;
+
+}
+
+
+
+.datos-primaria{
+
+    display:flex;
+
+    justify-content:space-around;
+
+    padding:15px;
+
+    background:#202020;
+
+}
+
+
+
+.datos-primaria strong{
+
+    display:block;
+
+    color:white;
+
+}
+
+
+
+.aviso-primaria{
+
+    margin:15px;
+
+    padding:15px;
+
+    border-radius:10px;
+
+    background:#5a3200;
+
+    color:#ffc400;
+
+}
+
+
+
+.reporte-primaria footer{
+
+    background:#397800;
+
+    text-align:center;
+
+    padding:10px;
+
+}

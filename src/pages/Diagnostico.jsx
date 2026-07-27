@@ -1,20 +1,20 @@
-import { 
-    useEffect, 
-    useRef, 
-    useState 
+import {
+    useEffect,
+    useRef,
+    useState
 } from "react";
 
-import { 
-    useLocation, 
-    useNavigate 
+import {
+    useLocation,
+    useNavigate
 } from "react-router-dom";
 
+import {
+    analizarImagen
+} from "../services/ia";
 
-import { analizarImagen } from "../services/ia";
-
-
-import { 
-    guardarDiagnostico 
+import {
+    guardarDiagnostico
 } from "../services/firestore";
 
 
@@ -30,10 +30,20 @@ function Diagnostico(){
 
 
 
-    const [imagen,setImagen] = useState(null);
+    const usuario = JSON.parse(
+        localStorage.getItem("usuario")
+    );
+
+
+
+    const [imagen,setImagen] =
+        useState(null);
+
 
     const [estado,setEstado] =
-        useState("Preparando análisis...");
+        useState(
+            "Preparando análisis..."
+        );
 
 
     const [resultado,setResultado] =
@@ -54,10 +64,22 @@ function Diagnostico(){
 
 
 
+
     useEffect(()=>{
 
 
+        if(!usuario){
+
+            navigate("/");
+
+            return;
+
+        }
+
+
+
         if(!location.state?.archivo){
+
 
             setEstado(
                 "No se recibió ninguna imagen"
@@ -75,7 +97,9 @@ function Diagnostico(){
 
 
         const url =
-            URL.createObjectURL(archivo);
+            URL.createObjectURL(
+                archivo
+            );
 
 
 
@@ -87,7 +111,8 @@ function Diagnostico(){
 
 
 
-    },[location.state]);
+    },[]);
+
 
 
 
@@ -106,9 +131,12 @@ function Diagnostico(){
             );
 
 
+
             await new Promise(
-                resolve=>setTimeout(resolve,500)
+                resolve =>
+                setTimeout(resolve,500)
             );
+
 
 
             setEstado(
@@ -141,7 +169,9 @@ function Diagnostico(){
 
 
 
-                    setResultado(respuesta);
+                    setResultado(
+                        respuesta
+                    );
 
 
 
@@ -199,8 +229,30 @@ function Diagnostico(){
         try{
 
 
-            if(!resultado)
+            if(!resultado){
+
                 return;
+
+            }
+
+
+
+            if(!usuario){
+
+
+                alert(
+                    "Debe iniciar sesión"
+                );
+
+
+                navigate("/");
+
+
+                return;
+
+            }
+
+
 
 
 
@@ -213,28 +265,55 @@ function Diagnostico(){
 
 
 
+
+
+
             await guardarDiagnostico({
 
-                cultivo:"Col",
+
 
                 resultado:
-                resultado.clase,
+                    resultado.clase,
+
 
 
                 confianza:
-                Number(resultado.confianza),
+                    resultado.confianza,
+
 
 
                 descripcion:
-                datos.descripcion,
+                    datos.descripcion,
+
 
 
                 recomendacion:
-                datos.recomendacion,
+                    datos.recomendacion,
+
+
+
+                imagen,
+
 
 
                 fecha:
-                new Date().toISOString()
+                    new Date().toISOString(),
+
+
+
+                usuarioId:
+                    usuario.id,
+
+
+
+                usuario:
+                    usuario.nombre,
+
+
+
+                perfil:
+                    usuario.perfil
+
 
 
             });
@@ -243,30 +322,43 @@ function Diagnostico(){
 
 
 
+
+
+
             navigate(
+
                 "/reporte",
+
                 {
 
                     state:{
 
+
                         imagen,
 
+
                         resultado
+
 
                     }
 
                 }
+
             );
 
 
 
+        }
 
-        }catch(error){
+        catch(error){
 
 
             console.error(
-                "Error guardando reporte",
+
+                "Error guardando diagnóstico:",
+
                 error
+
             );
 
 
@@ -281,9 +373,15 @@ function Diagnostico(){
 
 
 
+
+
     function nuevaFoto(){
 
-        navigate("/carga");
+
+        navigate(
+            "/carga"
+        );
+
 
     }
 
@@ -293,20 +391,26 @@ function Diagnostico(){
 
 
 
-return(
+
+
+    return(
 
 
 <div className="mobile-container">
 
 
-
 <header className="header">
 
+
 <h1>
+
 FitoLente
+
 </h1>
 
+
 </header>
+
 
 
 
@@ -315,8 +419,11 @@ FitoLente
 
 
 
+
+
 {
 imagen &&
+
 
 <div className="image-rounded-container">
 
@@ -325,7 +432,7 @@ imagen &&
 
 src={imagen}
 
-alt="Planta"
+alt="Cultivo"
 
 />
 
@@ -334,6 +441,9 @@ alt="Planta"
 
 
 }
+
+
+
 
 
 
@@ -348,62 +458,94 @@ alt="Planta"
 
 
 
+
+
 {
 resultado &&
+
 
 
 <div className="resultado">
 
 
+
 <h3>
+
 Diagnóstico
+
 </h3>
 
 
+
 <p>
+
 🌱 {info.nombre}
+
 </p>
 
 
 
+
+
 <h3>
+
 Descripción
+
 </h3>
 
 
+
 <p>
+
 {info.descripcion}
+
 </p>
 
 
 
 
+
 <h3>
+
 Confianza
+
 </h3>
+
 
 
 <p>
 
-{Math.round(resultado.confianza)} %
+{
+Math.round(
+resultado.confianza
+)
+} %
 
 </p>
+
 
 
 
 
 <h3>
+
 Recomendación
+
 </h3>
 
 
+
 <p>
+
 {info.recomendacion}
+
 </p>
+
 
 
 
 </div>
+
 
 
 }
@@ -412,7 +554,11 @@ Recomendación
 
 
 
+
+
+
 <div className="button-row">
+
 
 
 <button
@@ -430,6 +576,7 @@ Nueva foto
 
 
 
+
 <button
 
 className="btn"
@@ -443,7 +590,10 @@ Menú
 </button>
 
 
+
+
 </div>
+
 
 
 
@@ -457,8 +607,11 @@ Menú
 
 
 
+
+
 {
 mostrarModal &&
+
 
 
 <div className="modal-fondo">
@@ -467,24 +620,30 @@ mostrarModal &&
 <div className="modal">
 
 
+
 <h2>
+
 ¿Desea generar un reporte antes de salir?
+
 </h2>
+
 
 
 
 <p>
 
-Si selecciona "Sí",
-se guardará el diagnóstico
-y abrirá el reporte PDF.
+Si selecciona "Sí", el diagnóstico será almacenado y se abrirá el reporte.
 
 </p>
 
 
 
 
+
+
 <div className="modal-botones">
+
+
 
 
 
@@ -504,11 +663,15 @@ No
 
 
 
+
+
 <button
 
 className="btn"
 
 onClick={generarReporte}
+
+disabled={!resultado}
 
 >
 
@@ -519,18 +682,24 @@ Sí
 
 
 
-</div>
 
 
 
 </div>
 
 
+
+
 </div>
 
+
+</div>
 
 
 }
+
+
+
 
 
 
@@ -542,10 +711,12 @@ Sí
 </div>
 
 
-);
 
+    );
 
 }
+
+
 
 
 
@@ -556,88 +727,183 @@ Sí
 function obtenerInformacion(clase){
 
 
+
 const datos={
 
 
+
 sana:{
-nombre:"Planta sana",
-descripcion:"No presenta síntomas visibles.",
-recomendacion:"Continuar cuidados normales."
+
+nombre:
+"Planta sana",
+
+descripcion:
+"No presenta síntomas visibles.",
+
+recomendacion:
+"Continuar cuidados normales."
+
 },
+
+
 
 
 trips:{
-nombre:"Trips",
-descripcion:"Plaga que afecta tejidos de hojas.",
-recomendacion:"Aplicar control autorizado."
+
+nombre:
+"Trips",
+
+descripcion:
+"Plaga que afecta tejidos de hojas.",
+
+recomendacion:
+"Aplicar control autorizado."
+
 },
+
+
 
 
 pulgon:{
-nombre:"Pulgón",
-descripcion:"Insecto que consume savia.",
-recomendacion:"Realizar monitoreo y control."
+
+nombre:
+"Pulgón",
+
+descripcion:
+"Insecto que consume savia.",
+
+recomendacion:
+"Realizar monitoreo y control."
+
 },
+
+
 
 
 alternaria:{
-nombre:"Alternaria",
-descripcion:"Enfermedad causada por hongos.",
-recomendacion:"Eliminar hojas afectadas."
+
+nombre:
+"Alternaria",
+
+descripcion:
+"Enfermedad causada por hongos.",
+
+recomendacion:
+"Eliminar hojas afectadas."
+
 },
+
+
 
 
 mildiu_velloso:{
-nombre:"Mildiu velloso",
-descripcion:"Enfermedad por exceso de humedad.",
-recomendacion:"Mejorar ventilación."
+
+nombre:
+"Mildiu velloso",
+
+descripcion:
+"Enfermedad por exceso de humedad.",
+
+recomendacion:
+"Mejorar ventilación."
+
 },
+
+
 
 
 podredumbre_blanca:{
-nombre:"Podredumbre blanca",
-descripcion:"Pudrición causada por hongos.",
-recomendacion:"Eliminar partes afectadas."
+
+nombre:
+"Podredumbre blanca",
+
+descripcion:
+"Pudrición causada por hongos.",
+
+recomendacion:
+"Eliminar partes afectadas."
+
 },
+
+
 
 
 hernia_col:{
-nombre:"Hernia de la col",
-descripcion:"Afecta raíces del cultivo.",
-recomendacion:"Realizar rotación."
+
+nombre:
+"Hernia de la col",
+
+descripcion:
+"Afecta raíces del cultivo.",
+
+recomendacion:
+"Realizar rotación."
+
 },
+
+
 
 
 deficiencia_n:{
-nombre:"Deficiencia de nitrógeno",
-descripcion:"Bajo nivel de nitrógeno.",
-recomendacion:"Aplicar fertilizante adecuado."
+
+nombre:
+"Deficiencia de nitrógeno",
+
+descripcion:
+"Bajo nivel de nitrógeno.",
+
+recomendacion:
+"Aplicar fertilizante adecuado."
+
 },
 
 
+
+
 deficiencia_p:{
-nombre:"Deficiencia de fósforo",
-descripcion:"Bajo nivel de fósforo.",
-recomendacion:"Aplicar fertilización fosfatada."
+
+nombre:
+"Deficiencia de fósforo",
+
+descripcion:
+"Bajo nivel de fósforo.",
+
+recomendacion:
+"Aplicar fertilización fosfatada."
+
 }
 
 
+
 };
+
+
 
 
 
 return datos[clase] || {
 
-nombre:clase,
 
-descripcion:"Sin información.",
+nombre:
+clase,
 
-recomendacion:"Consultar especialista."
+
+descripcion:
+"Sin información.",
+
+
+recomendacion:
+"Consultar especialista."
+
 
 };
 
 
+
 }
+
+
+
 
 
 

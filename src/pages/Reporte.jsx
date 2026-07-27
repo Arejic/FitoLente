@@ -12,6 +12,9 @@ import { generarPDF } from "../services/pdf";
 
 import "../assets/css/reporte.css";
 
+import ReportePrimaria from "../components/ReportePrimaria";
+
+
 
 function Reporte(){
 
@@ -25,7 +28,19 @@ function Reporte(){
 
 
     const state = location.state || {};
-    const desdeHistorial = Boolean(state.reporte);
+
+
+
+    const desdeHistorial =
+        Boolean(state.reporte);
+
+
+
+
+    const usuarioActual =
+        JSON.parse(
+            localStorage.getItem("usuario")
+        );
 
 
 
@@ -33,46 +48,103 @@ function Reporte(){
 
     let resultado = null;
 
+    let usuario = null;
+
+    let perfil = null;
 
 
-    // ==============================
-    // REPORTE NUEVO
-    // ==============================
 
-    if(state.imagen && state.resultado){
 
-        imagen = state.imagen;
 
-        resultado = state.resultado;
+    // ==================================
+    // REPORTE NUEVO DESDE DIAGNOSTICO
+    // ==================================
+
+
+    if(
+        state.imagen &&
+        state.resultado
+    ){
+
+
+        imagen =
+            state.imagen;
+
+
+        resultado =
+            state.resultado;
+
+
+
+        usuario =
+            usuarioActual?.nombre ||
+            "Usuario desconocido";
+
+
+
+        perfil =
+            usuarioActual?.perfil ||
+            "Sin perfil";
+
 
     }
 
 
 
-    // ==============================
+
+
+
+    // ==================================
     // REPORTE DESDE HISTORIAL
-    // ==============================
+    // ==================================
+
 
     if(state.reporte){
 
 
+
         resultado = {
 
+
             clase:
-            state.reporte.resultado,
+                state.reporte.resultado,
+
 
 
             confianza:
-            Number(state.reporte.confianza)
+                Number(
+                    state.reporte.confianza
+                )
+
 
         };
 
 
+
+
         imagen =
-        state.reporte.imagen || null;
+            state.reporte.imagen ||
+            null;
+
+
+
+        usuario =
+            state.reporte.usuario ||
+            "Usuario desconocido";
+
+
+
+        perfil =
+            state.reporte.perfil ||
+            "Sin perfil";
+
 
 
     }
+
+
+
+
 
 
 
@@ -83,7 +155,9 @@ function Reporte(){
 
         if(!resultado){
 
+
             navigate("/menu");
+
 
         }
 
@@ -94,34 +168,118 @@ function Reporte(){
 
 
 
+
+
+
+
     if(!resultado){
 
+
         return null;
+
 
     }
 
 
 
 
+
+
+    // ==================================
+    // REPORTE PARA PRIMARIA
+    // ==================================
+
+
+    if(
+        perfil?.toLowerCase() === "primaria"
+    ){
+
+
+        const infoPrimaria =
+            obtenerInformacion(
+                resultado.clase
+            );
+
+
+
+        return (
+
+            <ReportePrimaria
+
+                reporte={{
+
+                    resultado:
+                        resultado.clase,
+
+
+                    nombre:
+                        infoPrimaria.nombre,
+
+
+                    descripcion:
+                        infoPrimaria.descripcion,
+
+
+                    recomendacion:
+                        infoPrimaria.recomendacion,
+
+
+                    confianza:
+                        resultado.confianza,
+
+
+                    imagen,
+
+
+                    usuario,
+
+
+                    fecha:
+                        new Date().toISOString()
+
+                }}
+
+            />
+
+        );
+
+
+    }
+
+
+
+
+
+
+
+
+
     const info =
-    obtenerInformacion(resultado.clase);
+        obtenerInformacion(
+            resultado.clase
+        );
 
 
 
 
 
     const fecha =
-    new Date();
+        new Date();
+
 
 
 
     const fechaTexto =
-    fecha.toLocaleDateString();
+        fecha.toLocaleDateString();
+
 
 
 
     const horaTexto =
-    fecha.toLocaleTimeString();
+        fecha.toLocaleTimeString();
+
+
+
 
 
 
@@ -131,15 +289,19 @@ function Reporte(){
     return (
 
 
-
         <div className="pagina-reporte">
 
 
 
             <div
+
                 className="reporte"
+
                 ref={reporteRef}
+
             >
+
+
 
 
 
@@ -148,16 +310,25 @@ function Reporte(){
 
 
                     <h1>
+
                         FitoLente
+
                     </h1>
 
 
+
                     <h2>
+
                         Reporte de Diagnóstico Fitosanitario
+
                     </h2>
 
 
+
                 </div>
+
+
+
 
 
 
@@ -167,15 +338,19 @@ function Reporte(){
                 <div className="datos">
 
 
+
                     <div>
 
                         <strong>
                             Fecha:
                         </strong>
 
+
                         <br/>
 
+
                         {fechaTexto}
+
 
                     </div>
 
@@ -183,15 +358,20 @@ function Reporte(){
 
 
 
+
                     <div>
+
 
                         <strong>
                             Hora:
                         </strong>
 
+
                         <br/>
 
+
                         {horaTexto}
+
 
                     </div>
 
@@ -199,21 +379,82 @@ function Reporte(){
 
 
 
+
                     <div>
+
 
                         <strong>
                             Cultivo:
                         </strong>
 
+
                         <br/>
 
+
                         Col
+
 
                     </div>
 
 
 
                 </div>
+
+
+
+
+
+
+
+
+
+                <div className="datos">
+
+
+
+                    <div>
+
+
+                        <strong>
+                            Generado por:
+                        </strong>
+
+
+                        <br/>
+
+
+                        {usuario}
+
+
+
+                    </div>
+
+
+
+
+
+
+                    <div>
+
+
+                        <strong>
+                            Perfil:
+                        </strong>
+
+
+                        <br/>
+
+
+                        {perfil}
+
+
+
+                    </div>
+
+
+
+                </div>
+
 
 
 
@@ -224,6 +465,7 @@ function Reporte(){
 
                 {
                     imagen &&
+
 
                     <div className="imagen">
 
@@ -239,6 +481,7 @@ function Reporte(){
 
                     </div>
 
+
                 }
 
 
@@ -253,15 +496,20 @@ function Reporte(){
 
 
                     <h3>
+
                         Diagnóstico
+
                     </h3>
+
+
 
 
                     <p>
 
-                        {info.nombre}
+                        🌱 {info.nombre}
 
                     </p>
+
 
 
                 </div>
@@ -278,7 +526,9 @@ function Reporte(){
 
 
                     <h3>
+
                         Confianza
+
                     </h3>
 
 
@@ -295,7 +545,9 @@ function Reporte(){
                             style={{
 
                                 width:
-                                `${Math.round(resultado.confianza)}%`
+                                `${Math.round(
+                                    resultado.confianza
+                                )}%`
 
                             }}
 
@@ -303,6 +555,7 @@ function Reporte(){
 
 
                         </div>
+
 
 
                     </div>
@@ -313,11 +566,13 @@ function Reporte(){
 
                     <p>
 
+
                         {
                             Math.round(
                                 resultado.confianza
                             )
                         } %
+
 
                     </p>
 
@@ -330,15 +585,15 @@ function Reporte(){
 
 
 
-
-
-
                 <div className="seccion">
 
 
                     <h3>
+
                         Descripción
+
                     </h3>
+
 
 
                     <p>
@@ -348,6 +603,7 @@ function Reporte(){
                     </p>
 
 
+
                 </div>
 
 
@@ -362,8 +618,12 @@ function Reporte(){
 
 
                     <h3>
+
                         Recomendaciones
+
                     </h3>
+
+
 
 
                     <p>
@@ -373,6 +633,7 @@ function Reporte(){
                     </p>
 
 
+
                 </div>
 
 
@@ -387,8 +648,11 @@ function Reporte(){
 
 
                     <h3>
+
                         Observaciones
+
                     </h3>
+
 
 
 
@@ -402,7 +666,9 @@ function Reporte(){
                     </p>
 
 
+
                 </div>
+
 
 
 
@@ -424,6 +690,7 @@ function Reporte(){
 
 
             </div>
+
 
 
 
@@ -457,35 +724,45 @@ function Reporte(){
 
 
 
+                <button
 
-        <button
+                    className="btn"
 
-className="btn"
+                    onClick={()=>{
 
-onClick={()=>{
 
-    if(desdeHistorial){
+                        if(desdeHistorial){
 
-        navigate("/menu");
 
-    }else{
+                            navigate("/prehistorial");
 
-        navigate("/carga");
 
-    }
+                        }else{
 
-}}
 
->
+                            navigate("/carga");
 
-Regresar
 
-</button>
+                        }
+
+
+                    }}
+
+                >
+
+
+                    Regresar
+
+
+                </button>
+
 
 
 
 
             </div>
+
+
 
 
 
@@ -497,7 +774,13 @@ Regresar
 
     );
 
+
 }
+
+
+
+
+
 
 
 
@@ -505,135 +788,202 @@ Regresar
 function obtenerInformacion(clase){
 
 
+
     const informacion = {
+
 
 
         sana:{
 
-            nombre:"Planta sana",
+
+            nombre:
+            "Planta sana",
+
 
             descripcion:
             "La planta no presenta síntomas visibles de enfermedades, plagas o deficiencias nutricionales.",
 
+
             recomendacion:
             "Continúe con los cuidados habituales y realice inspecciones periódicas."
 
+
         },
+
+
 
 
 
         trips:{
 
-            nombre:"Trips",
+
+            nombre:
+            "Trips",
+
 
             descripcion:
             "Plaga que afecta los tejidos de las hojas y reduce el desarrollo de la planta.",
 
+
             recomendacion:
             "Aplicar control biológico o tratamiento autorizado."
 
+
         },
+
+
 
 
 
         pulgon:{
 
-            nombre:"Pulgón",
+
+            nombre:
+            "Pulgón",
+
 
             descripcion:
             "Insecto chupador que debilita la planta al alimentarse de la savia.",
 
+
             recomendacion:
             "Realizar monitoreo y aplicar medidas de control."
 
+
         },
+
+
 
 
 
         alternaria:{
 
-            nombre:"Alternaria",
+
+            nombre:
+            "Alternaria",
+
 
             descripcion:
             "Enfermedad causada por hongos que produce manchas oscuras en las hojas.",
 
+
             recomendacion:
             "Retirar hojas afectadas y controlar humedad."
 
+
         },
+
+
 
 
 
         mildiu_velloso:{
 
-            nombre:"Mildiu velloso",
+
+            nombre:
+            "Mildiu velloso",
+
 
             descripcion:
             "Enfermedad favorecida por humedad elevada y poca ventilación.",
 
+
             recomendacion:
             "Mejorar ventilación y aplicar fungicida autorizado."
 
+
         },
+
+
 
 
 
         podredumbre_blanca:{
 
-            nombre:"Podredumbre blanca",
+
+            nombre:
+            "Podredumbre blanca",
+
 
             descripcion:
             "Enfermedad causada por hongos que provoca pudrición de tejidos.",
 
+
             recomendacion:
             "Eliminar partes afectadas y reducir exceso de humedad."
 
+
         },
+
+
 
 
 
         hernia_col:{
 
-            nombre:"Hernia de la col",
+
+            nombre:
+            "Hernia de la col",
+
 
             descripcion:
             "Enfermedad que afecta principalmente las raíces del cultivo.",
 
+
             recomendacion:
             "Realizar rotación de cultivos y mejorar manejo del suelo."
 
+
         },
+
+
 
 
 
         deficiencia_n:{
 
-            nombre:"Deficiencia de nitrógeno",
+
+            nombre:
+            "Deficiencia de nitrógeno",
+
 
             descripcion:
             "La planta presenta baja disponibilidad de nitrógeno.",
 
+
             recomendacion:
             "Aplicar fertilización nitrogenada según necesidad."
+
 
         },
 
 
 
+
+
         deficiencia_p:{
 
-            nombre:"Deficiencia de fósforo",
+
+            nombre:
+            "Deficiencia de fósforo",
+
 
             descripcion:
             "La planta presenta deficiencia de fósforo.",
 
+
             recomendacion:
             "Aplicar fertilización fosfatada adecuada."
+
 
         }
 
 
+
     };
+
+
+
 
 
 
@@ -641,18 +991,30 @@ function obtenerInformacion(clase){
     return informacion[clase] || {
 
 
-        nombre:clase,
+        nombre:
+        clase,
+
+
 
         descripcion:
         "No existe información disponible para este diagnóstico.",
 
+
+
         recomendacion:
         "Consulte a un especialista."
+
+
 
     };
 
 
+
 }
+
+
+
+
 
 
 

@@ -8,58 +8,73 @@ import {
 } from "react-router-dom";
 
 import {
-    obtenerDiagnosticos
+    obtenerDiagnosticosPerfil
 } from "../services/firestore";
 
 
-
-function Prehistorial(){
+function Prehistorial() {
 
 
     const navigate = useNavigate();
 
 
-    const [fechaFiltro,setFechaFiltro] =
+    const [fechaFiltro, setFechaFiltro] =
         useState("");
 
-    const [busqueda,setBusqueda] =
+
+    const [busqueda, setBusqueda] =
         useState("");
 
-    const [historial,setHistorial] =
+
+    const [historial, setHistorial] =
         useState([]);
 
 
 
+    useEffect(() => {
 
 
-    useEffect(()=>{
+        async function cargarHistorial() {
 
 
-        async function cargarHistorial(){
+            try {
 
 
-            try{
+                const usuario =
+                    JSON.parse(
+                        localStorage.getItem("usuario")
+                    );
+
+
+
+                if (!usuario) {
+
+                    console.error(
+                        "No existe usuario en localStorage"
+                    );
+
+                    return;
+
+                }
+
 
 
                 const datos =
-                    await obtenerDiagnosticos();
+                    await obtenerDiagnosticosPerfil(
+                        usuario.perfil
+                    );
 
-
-                console.log(
-                    "Historial:",
-                    datos
-                );
 
 
                 setHistorial(datos);
 
 
 
-            }catch(error){
+            } catch (error) {
 
 
                 console.error(
-                    "Error obteniendo historial:",
+                    "Error cargando historial:",
                     error
                 );
 
@@ -74,40 +89,18 @@ function Prehistorial(){
         cargarHistorial();
 
 
-
-    },[]);
-
+    }, []);
 
 
 
 
 
-    const regresar = () => {
+
+    function regresar() {
+
 
         navigate("/menu");
 
-    };
-
-
-
-
-
-
-
-function abrirReporte(item){
-
-    navigate("/reporte",{
-
-        state:{
-
-            reporte:item
-
-        }
-
-    });
-
-}
-
 
     }
 
@@ -117,22 +110,45 @@ function abrirReporte(item){
 
 
 
+    function abrirReporte(item) {
 
-    function descargarReporte(item){
+
+        navigate("/reporte", {
 
 
-        navigate("/reporte",{
+            state: {
 
-            state:{
-
-                reporte:item,
-
-                reconstruido:true,
-
-                descargar:true
+                reporte: item
 
             }
 
+
+        });
+
+
+    }
+
+
+
+
+
+
+
+    function descargarReporte(item) {
+
+
+        navigate("/reporte", {
+
+
+            state: {
+
+                reporte: item,
+
+                descargar: true
+
+            }
+
+
         });
 
 
@@ -145,69 +161,45 @@ function abrirReporte(item){
 
 
 
-
-    const filtrados =
-
-        historial.filter(item=>{
+    const filtrados = historial.filter(item => {
 
 
-            const texto =
-
-                busqueda.toLowerCase();
+        const texto =
+            busqueda.toLowerCase();
 
 
 
-
-            const diagnostico =
-
-                (
-                    item.resultado || ""
-                )
-                .toLowerCase();
+        const diagnostico =
+            (
+                item.resultado || ""
+            )
+            .toLowerCase();
 
 
 
-
-
-            const coincideBusqueda =
-
-                diagnostico.includes(texto);
+        const coincideBusqueda =
+            diagnostico.includes(texto);
 
 
 
+        const coincideFecha =
+            fechaFiltro === ""
+            ||
+            (
+                item.fecha || ""
+            )
+            .startsWith(fechaFiltro);
 
 
 
-            const coincideFecha =
-
-                fechaFiltro === ""
-
-                ||
-
-                (
-                    item.fecha || ""
-                )
-                .startsWith(fechaFiltro);
+        return (
+            coincideBusqueda
+            &&
+            coincideFecha
+        );
 
 
-
-
-
-
-            return (
-
-                coincideBusqueda
-
-                &&
-
-                coincideFecha
-
-            );
-
-
-
-        });
-
+    });
 
 
 
@@ -220,7 +212,6 @@ function abrirReporte(item){
 
 
         <div className="mobile-container">
-
 
 
             <header className="header">
@@ -239,9 +230,6 @@ function abrirReporte(item){
 
 
 
-                {/* BUSCADOR */}
-
-
                 <div className="search-row">
 
 
@@ -249,11 +237,8 @@ function abrirReporte(item){
                     <div className="search-box">
 
 
-
                         <button
-
                             className="btn-buscar"
-
                         >
 
                             Buscar
@@ -262,27 +247,20 @@ function abrirReporte(item){
 
 
 
-
-
                         <input
-
 
                             type="text"
 
-
                             className="input-buscar"
-
 
                             value={busqueda}
 
-
                             onChange={
-                                e=>
-                                setBusqueda(
-                                    e.target.value
-                                )
+                                e =>
+                                    setBusqueda(
+                                        e.target.value
+                                    )
                             }
-
 
                         />
 
@@ -290,10 +268,6 @@ function abrirReporte(item){
                     </div>
 
 
-
-
-
-                    {/* CALENDARIO */}
 
 
 
@@ -306,20 +280,16 @@ function abrirReporte(item){
 
                         <input
 
-
                             type="date"
-
 
                             value={fechaFiltro}
 
-
                             onChange={
-                                e=>
-                                setFechaFiltro(
-                                    e.target.value
-                                )
+                                e =>
+                                    setFechaFiltro(
+                                        e.target.value
+                                    )
                             }
-
 
                         />
 
@@ -337,166 +307,173 @@ function abrirReporte(item){
 
 
 
-
-                {/* HISTORIAL */}
-
-
-
                 <div className="history-list">
 
 
 
-                {
+                    {
+
+                        filtrados.length === 0
 
 
-                filtrados.length === 0
-
-                ?
-
-                <p>
-                    No hay reportes.
-                </p>
+                        ?
 
 
-                :
-
-
-                filtrados.map((item,index)=>(
+                        <p>
+                            No hay reportes.
+                        </p>
 
 
 
-                    <div
-
-                        className="history-card"
-
-                        key={
-                            item.id || index
-                        }
-
-
-                        onDoubleClick={()=>
-                            abrirReporte(item)
-                        }
-
-
-                    >
+                        :
 
 
 
-
-
-                        <div className="history-info">
-
-
-
-                            <span className="icon-documento">
-
-                                📋
-
-                            </span>
+                        filtrados.map(
+                            (item,index)=>(
 
 
 
-
-                            <span className="history-title">
-
+                            <div
 
 
-                                <strong>
-
-                                    {item.resultado}
-
-                                </strong>
+                                className="history-card"
 
 
-
-                                <br/>
-
-
-                                Confianza:
-
-                                {
-                                    Math.round(
-                                        item.confianza
-                                    )
-                                }%
-
-
-
-                                <br/>
-
-                                {
-                                    new Date(
-                                        item.fecha
-                                    )
-                                    .toLocaleString()
+                                key={
+                                    item.id || index
                                 }
 
 
 
-                            </span>
+                                onDoubleClick={
+                                    () =>
+                                    abrirReporte(item)
+                                }
+
+
+                            >
 
 
 
-                        </div>
+                                <div className="history-info">
 
 
+                                    <span className="icon-documento">
 
+                                        📋
 
-
-
-                        <button
-
-
-                            className="btn-download"
-
-
-                            title="Descargar reporte"
-
-
-
-                            onClick={(e)=>{
-
-
-                                e.stopPropagation();
-
-
-                                descargarReporte(item);
-
-
-                            }}
-
-
-
-                        >
-
-
-                            ↓
-
-
-                        </button>
+                                    </span>
 
 
 
 
 
-
-                    </div>
-
+                                    <span className="history-title">
 
 
-                ))
+
+                                        <strong>
+
+                                            {
+                                                item.resultado
+                                            }
+
+                                        </strong>
 
 
-                }
+
+                                        <br/>
 
 
+
+                                        Confianza:
+
+                                        {" "}
+
+
+
+                                        {
+                                            Math.round(
+                                                item.confianza
+                                            )
+                                        }%
+
+
+
+                                        <br/>
+
+
+
+                                        {
+                                            item.fecha &&
+                                            new Date(
+                                                item.fecha
+                                            )
+                                            .toLocaleString()
+                                        }
+
+
+
+                                    </span>
+
+
+
+                                </div>
+
+
+
+
+
+
+                                <button
+
+
+                                    className="btn-download"
+
+
+
+                                    title="Descargar reporte"
+
+
+
+                                    onClick={
+                                        (e)=>{
+
+
+                                            e.stopPropagation();
+
+
+                                            descargarReporte(item);
+
+
+                                        }
+
+                                    }
+
+
+                                >
+
+                                    ↓
+
+                                </button>
+
+
+
+
+
+                            </div>
+
+
+
+                        ))
+
+
+                    }
 
 
 
                 </div>
-
-
 
 
 
@@ -507,27 +484,20 @@ function abrirReporte(item){
                 <div className="footer-controls">
 
 
-
                     <button
 
                         className="btn-regresar"
 
-
                         onClick={regresar}
-
 
                     >
 
                         Regresar
 
-
                     </button>
 
 
-
                 </div>
-
-
 
 
 
@@ -539,7 +509,10 @@ function abrirReporte(item){
 
 
 
+
             <div className="footer-bar"></div>
+
+
 
 
 
