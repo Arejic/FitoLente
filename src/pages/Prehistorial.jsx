@@ -182,15 +182,42 @@ function Prehistorial() {
 
 
 
-        const coincideFecha =
-            fechaFiltro === ""
-            ||
-            (
-                item.fecha || ""
-            )
-            .startsWith(fechaFiltro);
+        const coincideFecha = (() => {
 
+    if (fechaFiltro === "") {
 
+        return true;
+
+    }
+
+    if (!item.fecha) {
+
+        return false;
+
+    }
+
+    const fechaReporte =
+        new Date(item.fecha);
+
+    const año =
+        fechaReporte.getFullYear();
+
+    const mes =
+        String(
+            fechaReporte.getMonth() + 1
+        ).padStart(2,"0");
+
+    const dia =
+        String(
+            fechaReporte.getDate()
+        ).padStart(2,"0");
+
+    const fechaLocal =
+        `${año}-${mes}-${dia}`;
+
+    return fechaLocal === fechaFiltro;
+
+})();
 
         return (
             coincideBusqueda
