@@ -30,6 +30,10 @@ function Prehistorial() {
         useState([]);
 
 
+    const [perfil, setPerfil] =
+        useState("");
+
+
 
     useEffect(() => {
 
@@ -59,6 +63,13 @@ function Prehistorial() {
 
 
 
+                setPerfil(
+                    usuario.perfil
+                    ?.toLowerCase()
+                );
+
+
+
                 const datos =
                     await obtenerDiagnosticosPerfil(
                         usuario.perfil
@@ -70,7 +81,7 @@ function Prehistorial() {
 
 
 
-            } catch (error) {
+            } catch(error) {
 
 
                 console.error(
@@ -96,12 +107,11 @@ function Prehistorial() {
 
 
 
-    function regresar() {
 
+    function regresar(){
 
         navigate("/menu");
 
-
     }
 
 
@@ -110,124 +120,153 @@ function Prehistorial() {
 
 
 
-    function abrirReporte(item) {
+
+    function abrirReporte(item){
 
 
-        navigate("/reporte", {
+        navigate(
+            "/reporte",
+            {
 
+                state:{
 
-            state: {
+                    reporte:item
 
-                reporte: item
+                }
 
             }
-
-
-        });
-
-
-    }
-
-
-
-
-
-
-
-    function descargarReporte(item) {
-
-
-        navigate("/reporte", {
-
-
-            state: {
-
-                reporte: item,
-
-                descargar: true
-
-            }
-
-
-        });
-
-
-    }
-
-
-
-
-
-
-
-
-    const filtrados = historial.filter(item => {
-
-
-        const texto =
-            busqueda.toLowerCase();
-
-
-
-        const diagnostico =
-            (
-                item.resultado || ""
-            )
-            .toLowerCase();
-
-
-
-        const coincideBusqueda =
-            diagnostico.includes(texto);
-
-
-
-        const coincideFecha = (() => {
-
-    if (fechaFiltro === "") {
-
-        return true;
-
-    }
-
-    if (!item.fecha) {
-
-        return false;
-
-    }
-
-    const fechaReporte =
-        new Date(item.fecha);
-
-    const año =
-        fechaReporte.getFullYear();
-
-    const mes =
-        String(
-            fechaReporte.getMonth() + 1
-        ).padStart(2,"0");
-
-    const dia =
-        String(
-            fechaReporte.getDate()
-        ).padStart(2,"0");
-
-    const fechaLocal =
-        `${año}-${mes}-${dia}`;
-
-    return fechaLocal === fechaFiltro;
-
-})();
-
-        return (
-            coincideBusqueda
-            &&
-            coincideFecha
         );
 
 
-    });
+    }
 
+
+
+
+
+
+
+    function descargarReporte(item){
+
+
+        navigate(
+            "/reporte",
+            {
+
+                state:{
+
+                    reporte:item,
+
+                    descargar:true
+
+                }
+
+            }
+        );
+
+
+    }
+
+
+
+
+
+
+
+    const filtrados =
+        historial.filter(item=>{
+
+
+            const texto =
+                busqueda.toLowerCase();
+
+
+
+            const diagnostico =
+                (
+                    item.resultado || ""
+                )
+                .toLowerCase();
+
+
+
+            const coincideBusqueda =
+                diagnostico.includes(texto);
+
+
+
+
+
+            const coincideFecha =
+            (()=>{
+
+
+                if(fechaFiltro===""){
+
+                    return true;
+
+                }
+
+
+
+                if(!item.fecha){
+
+                    return false;
+
+                }
+
+
+
+                const fechaReporte =
+                    new Date(item.fecha);
+
+
+
+                const año =
+                    fechaReporte.getFullYear();
+
+
+
+                const mes =
+                    String(
+                        fechaReporte.getMonth()+1
+                    )
+                    .padStart(2,"0");
+
+
+
+                const dia =
+                    String(
+                        fechaReporte.getDate()
+                    )
+                    .padStart(2,"0");
+
+
+
+                const fechaLocal =
+                    `${año}-${mes}-${dia}`;
+
+
+
+                return fechaLocal === fechaFiltro;
+
+
+            })();
+
+
+
+
+
+            return (
+
+                coincideBusqueda
+                &&
+                coincideFecha
+
+            );
+
+
+        });
 
 
 
@@ -237,15 +276,23 @@ function Prehistorial() {
 
     return (
 
-
         <div className="mobile-container">
 
 
             <header className="header">
 
+
                 <h1>
                     FitoLente
                 </h1>
+
+
+                <p>
+
+                    Historial de diagnósticos
+
+                </p>
+
 
             </header>
 
@@ -257,11 +304,14 @@ function Prehistorial() {
 
 
 
+
+
                 <div className="search-row">
 
 
 
                     <div className="search-box">
+
 
 
                         <button
@@ -271,6 +321,7 @@ function Prehistorial() {
                             Buscar
 
                         </button>
+
 
 
 
@@ -284,12 +335,13 @@ function Prehistorial() {
 
                             onChange={
                                 e =>
-                                    setBusqueda(
-                                        e.target.value
-                                    )
+                                setBusqueda(
+                                    e.target.value
+                                )
                             }
 
                         />
+
 
 
                     </div>
@@ -304,7 +356,6 @@ function Prehistorial() {
                         📅
 
 
-
                         <input
 
                             type="date"
@@ -313,9 +364,9 @@ function Prehistorial() {
 
                             onChange={
                                 e =>
-                                    setFechaFiltro(
-                                        e.target.value
-                                    )
+                                setFechaFiltro(
+                                    e.target.value
+                                )
                             }
 
                         />
@@ -338,169 +389,183 @@ function Prehistorial() {
 
 
 
-                    {
+                {
 
-                        filtrados.length === 0
 
+                filtrados.length === 0 ?
 
-                        ?
 
+                (
 
-                        <p>
-                            No hay reportes.
-                        </p>
+                    <p>
+                        No hay reportes.
+                    </p>
 
+                )
 
 
-                        :
+                :
 
 
 
-                        filtrados.map(
-                            (item,index)=>(
+                filtrados.map(
+                    (item,index)=>(
 
 
 
-                            <div
+                    <div
 
 
-                                className="history-card"
+                        className={
 
+                            perfil === "estudiante"
 
-                                key={
-                                    item.id || index
-                                }
+                            ?
 
+                            "history-card primaria-card"
 
+                            :
 
-                                onDoubleClick={
-                                    () =>
-                                    abrirReporte(item)
-                                }
+                            "history-card universidad-card"
 
+                        }
 
-                            >
 
 
+                        key={
+                            item.id || index
+                        }
 
-                                <div className="history-info">
 
 
-                                    <span className="icon-documento">
+                        onDoubleClick={
+                            ()=>abrirReporte(item)
+                        }
 
-                                        📋
 
-                                    </span>
+                    >
 
 
 
 
 
-                                    <span className="history-title">
+                        <div className="history-info">
 
 
+                            <span className="icon-documento">
 
-                                        <strong>
+                                📋
 
-                                            {
-                                                item.resultado
-                                            }
+                            </span>
 
-                                        </strong>
 
 
 
-                                        <br/>
 
+                            <span className="history-title">
 
 
-                                        Confianza:
+                                <strong>
 
-                                        {" "}
-
-
-
-                                        {
-                                            Math.round(
-                                                item.confianza
-                                            )
-                                        }%
-
-
-
-                                        <br/>
-
-
-
-                                        {
-                                            item.fecha &&
-                                            new Date(
-                                                item.fecha
-                                            )
-                                            .toLocaleString()
-                                        }
-
-
-
-                                    </span>
-
-
-
-                                </div>
-
-
-
-
-
-
-                                <button
-
-
-                                    className="btn-download"
-
-
-
-                                    title="Descargar reporte"
-
-
-
-                                    onClick={
-                                        (e)=>{
-
-
-                                            e.stopPropagation();
-
-
-                                            descargarReporte(item);
-
-
-                                        }
-
+                                    {
+                                        item.resultado
                                     }
 
-
-                                >
-
-                                    ↓
-
-                                </button>
+                                </strong>
 
 
 
 
+                                <br/>
 
-                            </div>
+                                Confianza:
+
+                                {" "}
+
+
+                                {
+                                    Math.round(
+                                        item.confianza
+                                    )
+                                }%
 
 
 
-                        ))
+
+                                <br/>
 
 
-                    }
 
+
+                                {
+
+                                    item.fecha &&
+
+                                    new Date(
+                                        item.fecha
+                                    )
+                                    .toLocaleString()
+
+                                }
+
+
+
+                            </span>
+
+
+                        </div>
+
+
+
+
+
+
+
+                        <button
+
+
+                            className="btn-download"
+
+
+
+                            title="Descargar reporte"
+
+
+
+                            onClick={
+                                e=>{
+
+                                    e.stopPropagation();
+
+                                    descargarReporte(item);
+
+                                }
+
+                            }
+
+
+                        >
+
+                            ↓
+
+
+                        </button>
+
+
+
+
+
+
+                    </div>
+
+
+                ))
+
+                }
 
 
                 </div>
+
 
 
 
@@ -521,10 +586,13 @@ function Prehistorial() {
 
                         Regresar
 
+
                     </button>
 
 
+
                 </div>
+
 
 
 
@@ -541,8 +609,6 @@ function Prehistorial() {
 
 
 
-
-
         </div>
 
 
@@ -550,7 +616,6 @@ function Prehistorial() {
 
 
 }
-
 
 
 export default Prehistorial;

@@ -47,7 +47,7 @@ Profesor primaria
 
 <button 
 className="btn btn-focused"
-onClick={()=>navigate("/menu")}>
+onClick={()=>navigate("/menuU")}>
 Profesor universidad
 </button>
 

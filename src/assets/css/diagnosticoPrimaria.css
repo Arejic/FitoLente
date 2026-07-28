@@ -1,0 +1,127 @@
+.diagnostico-primaria {
+
+    width: 100%;
+
+}
+
+
+
+.imagen-primaria {
+
+    width: 100%;
+
+    text-align: center;
+
+    margin-bottom: 20px;
+
+}
+
+
+
+.imagen-primaria img {
+
+    width: 90%;
+
+    max-width: 400px;
+
+    border-radius: 15px;
+
+}
+
+
+
+.seccion-primaria {
+
+    background: #f3f3f3;
+
+    border-radius: 15px;
+
+    padding: 15px;
+
+    margin-bottom: 15px;
+
+}
+
+
+
+.seccion-primaria label {
+
+    font-weight: bold;
+
+    display: block;
+
+    margin-bottom: 8px;
+
+}
+
+
+
+.seccion-primaria h2 {
+
+    font-size: 20px;
+
+}
+
+
+
+.seccion-primaria p {
+
+    line-height: 1.5;
+
+}
+
+
+
+.barra-primaria {
+
+    width: 100%;
+
+    height: 15px;
+
+    background: #ddd;
+
+    border-radius: 10px;
+
+    overflow: hidden;
+
+}
+
+
+
+.progreso-primaria {
+
+    height: 100%;
+
+    background: #4caf50;
+
+}
+
+
+
+.accion-primaria {
+
+    background: #e8f5e9;
+
+    border-radius: 15px;
+
+    padding: 15px;
+
+    margin-top: 15px;
+
+}
+
+
+
+.aviso-primaria {
+
+    background: #fff8e1;
+
+    border-radius: 15px;
+
+    padding: 15px;
+
+    margin-top: 15px;
+
+    font-size: 14px;
+
+}

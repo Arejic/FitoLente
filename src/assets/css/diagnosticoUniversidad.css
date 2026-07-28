@@ -1,0 +1,145 @@
+.reporte-universidad {
+
+    background:white;
+
+    border-radius:20px;
+
+    padding:25px;
+
+    width:90%;
+
+    margin:auto;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.15);
+
+}
+
+
+
+.imagen-universidad {
+
+    text-align:center;
+
+    margin-bottom:25px;
+
+}
+
+
+
+.imagen-universidad img {
+
+
+    width:360px;
+
+    max-width:90%;
+
+    border-radius:15px;
+
+
+}
+
+
+
+.bloque-universidad {
+
+
+    border-top:1px solid #ddd;
+
+    padding:25px 0;
+
+
+}
+
+
+
+.bloque-universidad label {
+
+
+    color:#287d34;
+
+    font-weight:bold;
+
+    font-size:18px;
+
+    border-left:6px solid #4caf50;
+
+    padding-left:10px;
+
+
+}
+
+
+
+.bloque-universidad h2 {
+
+
+    font-size:18px;
+
+    font-weight:normal;
+
+    margin-top:15px;
+
+
+}
+
+
+
+.bloque-universidad p {
+
+
+    font-size:16px;
+
+    line-height:1.5;
+
+
+}
+
+
+
+.barra-universidad {
+
+
+    width:100%;
+
+    height:15px;
+
+    background:#ddd;
+
+    border-radius:10px;
+
+    overflow:hidden;
+
+    margin-top:15px;
+
+
+}
+
+
+
+.progreso-universidad {
+
+
+    height:100%;
+
+    background:#4caf50;
+
+
+}
+
+
+
+.aviso-universidad {
+
+
+    margin-top:20px;
+
+    background:#fff8d8;
+
+    padding:15px;
+
+    border-radius:12px;
+
+    font-size:14px;
+
+
+}

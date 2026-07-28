@@ -18,6 +18,13 @@ import {
 } from "../services/firestore";
 
 
+import DiagnosticoPrimaria
+    from "../components/DiagnosticoPrimaria";
+
+import DiagnosticoUniversidad
+    from "../components/DiagnosticoUniversidad";
+
+
 
 function Diagnostico(){
 
@@ -40,18 +47,22 @@ function Diagnostico(){
         useState(null);
 
 
+
     const [estado,setEstado] =
         useState(
             "Preparando análisis..."
         );
 
 
+
     const [resultado,setResultado] =
         useState(null);
 
 
+
     const [mostrarModal,setMostrarModal] =
         useState(false);
+
 
 
 
@@ -62,6 +73,16 @@ function Diagnostico(){
 
 
 
+const perfil =
+    usuario?.perfil
+        ?.toString()
+        .trim()
+        .toLowerCase();
+
+
+const esEstudiante =
+    perfil === "estudiante" ||
+    perfil === "alumno";
 
 
 
@@ -120,6 +141,7 @@ function Diagnostico(){
 
 
 
+
     async function analizar(url){
 
 
@@ -160,7 +182,8 @@ function Diagnostico(){
                 try{
 
 
-                    imagenRef.current = img;
+                    imagenRef.current =
+                        img;
 
 
 
@@ -337,7 +360,11 @@ function Diagnostico(){
                         imagen,
 
 
-                        resultado
+                        resultado,
+
+
+                        perfil:
+                            usuario.perfil
 
 
                     }
@@ -419,139 +446,41 @@ FitoLente
 
 
 
-
-
 {
-imagen &&
 
+esEstudiante
 
-<div className="image-rounded-container">
+?
 
+<DiagnosticoPrimaria
 
-<img
+    imagen={imagen}
 
-src={imagen}
+    estado={estado}
 
-alt="Cultivo"
+    info={info}
+
+    resultado={resultado}
 
 />
 
 
-</div>
+:
+
+<DiagnosticoUniversidad
+
+    imagen={imagen}
+
+    estado={estado}
+
+    info={info}
+
+    resultado={resultado}
+
+/>
 
 
 }
-
-
-
-
-
-
-
-<h2>
-
-{estado}
-
-</h2>
-
-
-
-
-
-
-
-{
-resultado &&
-
-
-
-<div className="resultado">
-
-
-
-<h3>
-
-Diagnóstico
-
-</h3>
-
-
-
-<p>
-
-🌱 {info.nombre}
-
-</p>
-
-
-
-
-
-<h3>
-
-Descripción
-
-</h3>
-
-
-
-<p>
-
-{info.descripcion}
-
-</p>
-
-
-
-
-
-<h3>
-
-Confianza
-
-</h3>
-
-
-
-<p>
-
-{
-Math.round(
-resultado.confianza
-)
-} %
-
-</p>
-
-
-
-
-
-<h3>
-
-Recomendación
-
-</h3>
-
-
-
-<p>
-
-{info.recomendacion}
-
-</p>
-
-
-
-
-</div>
-
-
-
-}
-
-
-
 
 
 

@@ -1,179 +1,230 @@
 import "../assets/css/reportePrimaria.css";
 
 
-function ReportePrimaria({reporte}){
+function ReportePrimaria({ reporte }) {
 
 
     return (
 
-        <div className="pagina-reporte">
+        <div className="reporte-primaria">
 
 
-            <div className="reporte-primaria">
+            <header className="header-primaria">
+
+                <h1>
+                    FitoLente
+                </h1>
 
 
-                <header>
-
-                    <h1>
-                        FitoLente
-                    </h1>
+                <p>
+                    Reporte del Huerto Escolar
+                </p>
 
 
-                    <p>
-                        Reporte de tu huerto
-                    </p>
-
-                </header>
-
-
-
-
-
-                <div className="datos-primaria">
-
-
-                    <div>
-
-                        Fecha
-
-                        <strong>
-
-                            {
-                                new Date(
-                                    reporte.fecha
-                                ).toLocaleDateString()
-                            }
-
-                        </strong>
-
-
-                    </div>
+            </header>
 
 
 
 
 
-                    <div>
+            <div className="datos-primaria">
 
-                        Cultivo
 
-                        <strong>
-                            Col
-                        </strong>
+                <div>
 
-                    </div>
+                    Fecha
 
+                    <strong>
+
+                        {
+                            new Date(
+                                reporte.fecha
+                            ).toLocaleDateString()
+                        }
+
+                    </strong>
 
                 </div>
 
 
 
 
+                <div>
 
+                    Cultivo
 
-                <section>
-
-
-                    <label>
-                        ¿Qué le pasa a tu planta?
-                    </label>
-
-
-                    <h2>
-
-                        Tu col tiene:
-
-                        <br/>
-
-                        🌱 {reporte.nombre}
-
-                    </h2>
-
-
-                </section>
-
-
-
-
-
-
-
-                <section>
-
-
-                    <label>
-                        ¿Qué significa?
-                    </label>
-
-
-                    <p>
-
-                        {reporte.descripcion}
-
-                    </p>
-
-
-                </section>
-
-
-
-
-
-
-
-                <section>
-
-
-                    <label>
-                        ¿Qué hacer?
-                    </label>
-
-
-                    <p>
-
-                        {reporte.recomendacion}
-
-                    </p>
-
-
-                </section>
-
-
-
-
-
-
-
-                <div className="aviso-primaria">
-
-
-                    💡 Este resultado es una ayuda.
-                    Pide apoyo a un adulto si la planta continúa mal.
-
+                    <strong>
+                        Col
+                    </strong>
 
                 </div>
-
-
-
-
-
-
-
-                <footer>
-
-                    Generado por FitoLente
-
-                </footer>
-
 
 
             </div>
 
 
+
+
+
+            {
+                reporte.imagen &&
+
+
+                <div className="imagen-primaria">
+
+
+                    <img
+
+                        src={reporte.imagen}
+
+                        alt="Cultivo"
+
+                    />
+
+
+                </div>
+
+            }
+
+
+
+
+
+
+
+            <section>
+
+
+                <label>
+                    ¿Qué encontró FitoLente?
+                </label>
+
+
+                <h2>
+                    🌱 {reporte.nombre}
+                </h2>
+
+
+            </section>
+
+
+
+
+
+
+            <section>
+
+
+                <label>
+                    ¿Qué significa?
+                </label>
+
+
+                <p>
+                    {reporte.descripcion}
+                </p>
+
+
+            </section>
+
+
+
+
+
+
+            <section>
+
+
+                <label>
+                    Nivel de confianza
+                </label>
+
+
+                <div className="barra-primaria">
+
+
+                    <div
+
+                        className="progreso-primaria"
+
+                        style={{
+
+                            width:
+                            `${Math.round(reporte.confianza)}%`
+
+                        }}
+
+                    />
+
+
+                </div>
+
+
+                <p>
+                    {Math.round(reporte.confianza)}%
+                </p>
+
+
+            </section>
+
+
+
+
+
+
+
+
+            <div className="accion-primaria">
+
+
+                <label>
+                    ¿Qué podemos hacer?
+                </label>
+
+
+                <p>
+                    {reporte.recomendacion}
+                </p>
+
+
+            </div>
+
+
+
+
+
+
+            <div className="aviso-primaria">
+
+
+                💡 Este reporte sirve como apoyo para las actividades del huerto escolar.
+
+
+                <br/><br/>
+
+
+                Si la planta continúa presentando síntomas, es recomendable volver a revisarla o consultar a un especialista.
+
+
+            </div>
+
+
+
+
+
+
+
+            <footer className="footer-primaria">
+
+                Generado por FitoLente
+
+            </footer>
+
+
+
         </div>
 
     );
-
 
 }
 

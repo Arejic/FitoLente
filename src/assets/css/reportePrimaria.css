@@ -1,7 +1,9 @@
 .reporte-primaria{
 
     width:90%;
+
     max-width:480px;
+
     margin:auto;
 
     background:#2b2b2b;
@@ -12,33 +14,37 @@
 
     overflow:hidden;
 
+    box-shadow:0 4px 15px rgba(0,0,0,.3);
+
 }
 
 
 
-.reporte-primaria header{
+.header-primaria{
 
     background:#397800;
 
     text-align:center;
 
-    padding:20px;
+    padding:28px;
 
 }
 
 
 
-.reporte-primaria section{
+.header-primaria h1{
 
-    padding:20px;
+    font-size:40px;
+
+    margin:0;
 
 }
 
 
 
-.reporte-primaria label{
+.header-primaria p{
 
-    color:#aaa;
+    margin-top:8px;
 
 }
 
@@ -58,11 +64,115 @@
 
 
 
+.datos-primaria div{
+
+    text-align:center;
+
+}
+
+
+
 .datos-primaria strong{
 
     display:block;
 
     color:white;
+
+    margin-top:5px;
+
+}
+
+
+
+.imagen-primaria{
+
+    display:flex;
+
+    justify-content:center;
+
+    padding:20px;
+
+}
+
+
+
+.imagen-primaria img{
+
+    width:260px;
+
+    height:260px;
+
+    object-fit:cover;
+
+    border-radius:15px;
+
+    border:3px solid #397800;
+
+}
+
+
+
+.reporte-primaria section{
+
+    padding:22px;
+
+}
+
+
+
+.reporte-primaria label{
+
+    color:#aaa;
+
+}
+
+
+
+.reporte-primaria h2{
+
+    font-size:28px;
+
+    margin-top:8px;
+
+}
+
+
+
+.barra-primaria{
+
+    width:100%;
+
+    height:18px;
+
+    background:#444;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+}
+
+
+
+.progreso-primaria{
+
+    height:100%;
+
+    background:#76c442;
+
+}
+
+
+
+.accion-primaria{
+
+    background:#1c1c1c;
+
+    margin:18px;
+
+    padding:18px;
+
+    border-radius:12px;
 
 }
 
@@ -70,26 +180,38 @@
 
 .aviso-primaria{
 
-    margin:15px;
+    background:#4b2d05;
 
-    padding:15px;
+    color:#ffbf2f;
 
-    border-radius:10px;
+    margin:18px;
 
-    background:#5a3200;
+    padding:18px;
 
-    color:#ffc400;
+    border-radius:12px;
 
 }
 
 
 
-.reporte-primaria footer{
+.footer-primaria{
 
     background:#397800;
 
     text-align:center;
 
     padding:10px;
+
+}
+.reporte-primaria section{
+    padding:22px;
+}
+
+
+.reporte-primaria p{
+
+    color:white;
+
+    line-height:1.6;
 
 }
