@@ -14,6 +14,10 @@ import {
 } from "../services/ia";
 
 import {
+    obtenerUsuario
+} from "../services/sesion";
+
+import {
     guardarDiagnostico
 } from "../services/firestore";
 
@@ -23,8 +27,6 @@ import DiagnosticoPrimaria
 
 import DiagnosticoUniversidad
     from "../components/DiagnosticoUniversidad";
-
-
 
 function Diagnostico(){
 
@@ -37,9 +39,7 @@ function Diagnostico(){
 
 
 
-    const usuario = JSON.parse(
-        localStorage.getItem("usuario")
-    );
+    const usuario = obtenerUsuario();
 
 
 
@@ -293,53 +293,21 @@ const esEstudiante =
 
             await guardarDiagnostico({
 
+    resultado:
+        resultado.clase,
 
+    confianza:
+        resultado.confianza,
 
-                resultado:
-                    resultado.clase,
+    descripcion:
+        datos.descripcion,
 
+    recomendacion:
+        datos.recomendacion,
 
+    imagen
 
-                confianza:
-                    resultado.confianza,
-
-
-
-                descripcion:
-                    datos.descripcion,
-
-
-
-                recomendacion:
-                    datos.recomendacion,
-
-
-
-                imagen,
-
-
-
-                fecha:
-                    new Date().toISOString(),
-
-
-
-                usuarioId:
-                    usuario.id,
-
-
-
-                usuario:
-                    usuario.nombre,
-
-
-
-                perfil:
-                    usuario.perfil
-
-
-
-            });
+});
 
 
 

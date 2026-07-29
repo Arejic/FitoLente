@@ -174,7 +174,7 @@ function ReportePrimaria({ reporte }) {
 
 
 
-            <div className="accion-primaria">
+            <section className="recomendacion-primaria">
 
 
                 <label>
@@ -185,10 +185,9 @@ function ReportePrimaria({ reporte }) {
                 <p>
                     {reporte.recomendacion}
                 </p>
+            </section>
 
-
-            </div>
-
+    
 
 
 

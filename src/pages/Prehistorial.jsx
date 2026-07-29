@@ -8,9 +8,12 @@ import {
 } from "react-router-dom";
 
 import {
-    obtenerDiagnosticosPerfil
+    obtenerDiagnosticosUsuario
 } from "../services/firestore";
 
+import {
+    obtenerUsuario
+} from "../services/sesion";
 
 function Prehistorial() {
 
@@ -42,43 +45,29 @@ function Prehistorial() {
 
 
             try {
+const usuario = obtenerUsuario();
 
+if (!usuario) {
 
-                const usuario =
-                    JSON.parse(
-                        localStorage.getItem("usuario")
-                    );
+    console.error(
+        "No existe usuario en la sesión"
+    );
 
+    return;
 
+}
 
-                if (!usuario) {
+setPerfil(
+    usuario.perfil
+        ?.toLowerCase()
+);
 
-                    console.error(
-                        "No existe usuario en localStorage"
-                    );
+const datos =
+    await obtenerDiagnosticosUsuario(
+        usuario.id
+    );
 
-                    return;
-
-                }
-
-
-
-                setPerfil(
-                    usuario.perfil
-                    ?.toLowerCase()
-                );
-
-
-
-                const datos =
-                    await obtenerDiagnosticosPerfil(
-                        usuario.perfil
-                    );
-
-
-
-                setHistorial(datos);
-
+setHistorial(datos);                
 
 
             } catch(error) {

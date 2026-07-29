@@ -195,8 +195,8 @@ function DiagnosticoPrimaria({
 
 
 
+                    <section className="seccion-primaria">
 
-                    <section className="accion-primaria">
 
 
                         <label>

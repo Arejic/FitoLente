@@ -19,7 +19,9 @@ import {
     db
 } from "./firebase";
 
-
+import {
+    obtenerUsuario
+} from "./sesion";
 
 
 // =================================
@@ -151,196 +153,73 @@ export async function buscarUsuario(
 // =================================
 // DIAGNOSTICOS
 // =================================
-
-
-
-
 export async function guardarDiagnostico(datos){
-
-
 
     try{
 
+        const usuario = obtenerUsuario();
 
+        if(!usuario){
 
-        const usuario =
-            JSON.parse(
-                localStorage.getItem("usuario")
+            throw new Error(
+                "No existe una sesión activa."
             );
 
+        }
 
+        if(!usuario.id){
+
+            throw new Error(
+                "La sesión no contiene un usuario válido."
+            );
+
+        }
 
         const diagnostico = {
 
-
             ...datos,
 
+            usuarioId:
+                usuario.id,
 
+            usuario:
+                usuario.nombre,
 
             perfil:
-            usuario?.perfil || "sin_perfil",
-
-
-
-            usuarioId:
-            usuario?.id || null,
-
-
+                usuario.perfil,
 
             fecha:
-            datos.fecha ||
-            new Date().toISOString()
-
+                datos.fecha ||
+                new Date().toISOString()
 
         };
 
-
-
-
-
         const docRef =
             await addDoc(
-
 
                 collection(
                     db,
                     "diagnosticos"
                 ),
 
-
                 diagnostico
-
 
             );
 
-
-
         return docRef.id;
 
-
-
     }catch(error){
 
-
-
         console.error(
-
             "Error guardando diagnóstico:",
-
             error
-
         );
-
-
 
         throw error;
 
-
     }
 
-
 }
-
-
-
-
-
-
-
-// =================================
-// HISTORIAL POR PERFIL
-// =================================
-
-
-
-export async function obtenerDiagnosticosPerfil(perfil){
-
-
-    try{
-
-
-        const q = query(
-
-
-            collection(
-                db,
-                "diagnosticos"
-            ),
-
-
-
-            where(
-
-                "perfil",
-
-                "==",
-
-                perfil
-
-            ),
-
-
-
-            orderBy(
-
-                "fecha",
-
-                "desc"
-
-            )
-
-
-        );
-
-
-
-
-        const snapshot =
-            await getDocs(q);
-
-
-
-
-        return snapshot.docs.map(doc => ({
-
-
-            id:
-            doc.id,
-
-
-            ...doc.data()
-
-
-        }));
-
-
-
-    }catch(error){
-
-
-        console.error(
-
-            "Error historial perfil:",
-
-            error
-
-        );
-
-
-        throw error;
-
-
-    }
-
-
-}
-
-
-
-
-
-
-
 
 
 // =================================
@@ -359,38 +238,18 @@ export async function obtenerDiagnosticosUsuario(usuarioId){
 
         const q = query(
 
+    collection(
+        db,
+        "diagnosticos"
+    ),
 
+    where(
+        "usuarioId",
+        "==",
+        usuarioId
+    )
 
-            collection(
-                db,
-                "diagnosticos"
-            ),
-
-
-
-            where(
-
-                "usuarioId",
-
-                "==",
-
-                usuarioId
-
-            ),
-
-
-
-            orderBy(
-
-                "fecha",
-
-                "desc"
-
-            )
-
-
-
-        );
+);
 
 
 
