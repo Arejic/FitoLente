@@ -9,41 +9,27 @@ let clases = [];
 
 export async function cargarModelo() {
 
-  if(modelo !== null){
+  // Si ya está cargado, reutilizarlo
+  if (modelo !== null) {
     return modelo;
   }
 
-  console.log("Cargando modelo...");
-
   try {
 
-    modelo = await tf.loadGraphModel(
-      "/modelo_web/model.json"
-    );
+    console.log("Cargando modelo...");
 
-    console.log("Modelo cargado correctamente");
+    modelo = await tf.loadGraphModel("/modelo_web/model.json");
 
-    console.log(
-      "Entradas:",
-      modelo.inputs
-    );
+    console.log("✅ Modelo cargado correctamente");
 
-    console.log(
-      "Salidas:",
-      modelo.outputs
-    );
-
+    console.log("Entradas:", modelo.inputs);
+    console.log("Salidas:", modelo.outputs);
 
     return modelo;
 
+  } catch (error) {
 
-  } catch(error){
-
-    console.error(
-      "Error cargando modelo:",
-      error
-    );
-
+    console.error("❌ Error cargando el modelo:", error);
     throw error;
 
   }
@@ -60,13 +46,27 @@ export async function cargarClases() {
     return clases;
   }
 
-  const respuesta = await fetch("/class_names.json");
+  try {
 
-  clases = await respuesta.json();
+    const respuesta = await fetch("/class_names.json");
 
-  console.log("Clases:", clases);
+    if (!respuesta.ok) {
+      throw new Error("No se pudo cargar class_names.json");
+    }
 
-  return clases;
+    clases = await respuesta.json();
+
+    console.log("Clases:", clases);
+
+    return clases;
+
+  } catch (error) {
+
+    console.error("Error cargando clases:", error);
+    throw error;
+
+  }
+
 }
 
 /* ============================
@@ -76,55 +76,80 @@ export async function cargarClases() {
 export async function analizarImagen(imgHTML) {
 
   const modelo = await cargarModelo();
-
   const clases = await cargarClases();
 
-  let tensor = tf.browser
-    .fromPixels(imgHTML)
-    .resizeBilinear([224, 224])
-    .toFloat()
-    .div(255.0)
-    .expandDims();
 
-  // GraphModel
-  let salida = await modelo.executeAsync(tensor);
+  let tensor = tf.tidy(() => {
 
-  // Algunos modelos regresan un arreglo
-  if (Array.isArray(salida)) {
-    salida = salida[0];
-  }
+    let t = tf.browser
+      .fromPixels(imgHTML)
+      .resizeBilinear([224, 224])
+      .toFloat();
 
-  const datos = await salida.data();
+    t = t.div(127.5).sub(1);
 
-  let indice = 0;
+    return t.expandDims();
 
-  let mayor = datos[0];
+  });
 
-  for (let i = 1; i < datos.length; i++) {
 
-    if (datos[i] > mayor) {
+  try {
 
-      mayor = datos[i];
+    // Inferencia fuera de tidy
+    let salida = await modelo.executeAsync(tensor);
 
-      indice = i;
+
+    if (Array.isArray(salida)) {
+      salida = salida[0];
+    }
+
+
+    const datos = salida.dataSync();
+
+
+    console.log("Probabilidades:", datos);
+
+
+    let indice = 0;
+    let mayor = datos[0];
+
+
+    for (let i = 1; i < datos.length; i++) {
+
+      if (datos[i] > mayor) {
+
+        mayor = datos[i];
+        indice = i;
+
+      }
 
     }
 
+
+    const resultado = {
+
+      clase: clases[indice] ?? "desconocido",
+
+      confianza: Number((mayor * 100).toFixed(2)),
+
+      indice,
+
+      probabilidades: Array.from(datos)
+
+    };
+
+
+    salida.dispose();
+
+
+    return resultado;
+
+
+  } finally {
+
+    // liberar tensor de entrada
+    tensor.dispose();
+
   }
-
-  tf.dispose(tensor);
-  tf.dispose(salida);
-
-  return {
-
-    clase: clases[indice],
-
-    confianza: (mayor * 100).toFixed(2),
-
-    indice,
-
-    probabilidades: [...datos]
-
-  };
 
 }
