@@ -291,7 +291,7 @@ const esEstudiante =
 
 
 
-            await guardarDiagnostico({
+          await guardarDiagnostico({
 
     resultado:
         resultado.clase,
@@ -315,32 +315,54 @@ const esEstudiante =
 
 
 
-
             navigate(
 
-                "/reporte",
+    "/reporte",
 
-                {
+    {
 
-                    state:{
-
-
-                        imagen,
+        state:{
 
 
-                        resultado,
+            imagen,
 
 
-                        perfil:
-                            usuario.perfil
+            resultado,
 
 
-                    }
+            nombre:
+                datos.nombre,
 
-                }
 
-            );
+            descripcion:
+                datos.descripcion,
 
+
+            recomendacion:
+                datos.recomendacion,
+
+
+            confianza:
+                resultado.confianza,
+
+
+            perfil:
+                usuario.perfil,
+
+
+            usuario:
+                usuario.nombre || "Usuario FitoLente",
+
+
+            fecha:
+                new Date()
+
+
+        }
+
+    }
+
+);
 
 
         }
@@ -624,53 +646,44 @@ Sí
 function obtenerInformacion(clase){
 
 
-
-const datos={
-
+const datos = {
 
 
 sana:{
 
-nombre:
-"Planta sana",
+nombre:"Planta sana",
+
+tipo:"Sin daños visibles",
+
+nivel:"Bajo",
 
 descripcion:
-"No presenta síntomas visibles.",
+"La imagen no presenta síntomas evidentes de enfermedades o presencia de plagas.",
+
+
+sintomas:[
+"Coloración normal de hojas",
+"Crecimiento uniforme",
+"No se observan manchas o deformaciones"
+],
+
+
+causas:
+"No se identifican factores de riesgo visibles.",
+
+
+acciones:[
+"Continuar con riego adecuado",
+"Mantener buena iluminación",
+"Realizar revisiones periódicas"
+],
+
+
+prevencion:[
+"Realizar monitoreo constante para detectar cambios tempranos."],
 
 recomendacion:
-"Continuar cuidados normales."
-
-},
-
-
-
-
-trips:{
-
-nombre:
-"Trips",
-
-descripcion:
-"Plaga que afecta tejidos de hojas.",
-
-recomendacion:
-"Aplicar control autorizado."
-
-},
-
-
-
-
-pulgon:{
-
-nombre:
-"Pulgón",
-
-descripcion:
-"Insecto que consume savia.",
-
-recomendacion:
-"Realizar monitoreo y control."
+    "Continuar con el riego adecuado, mantener una buena iluminación y realizar revisiones periódicas para conservar la planta en buen estado."
 
 },
 
@@ -679,119 +692,337 @@ recomendacion:
 
 alternaria:{
 
-nombre:
-"Alternaria",
+nombre:"Alternaria",
+
+tipo:"Enfermedad fúngica",
+
+nivel:"Medio",
 
 descripcion:
-"Enfermedad causada por hongos.",
+"Enfermedad causada por hongos del género Alternaria que provoca manchas en las hojas y puede reducir la capacidad fotosintética de la planta.",
 
-recomendacion:
-"Eliminar hojas afectadas."
+
+sintomas:[
+"Manchas circulares oscuras",
+"Zonas amarillentas alrededor de lesiones",
+"Secamiento progresivo de hojas"
+],
+
+
+causas:
+"Favorecida por humedad elevada, poca ventilación y restos vegetales infectados.",
+
+
+acciones:[
+"Retirar hojas afectadas",
+"Evitar mojar el follaje",
+"Mejorar ventilación del cultivo"
+],
+
+
+prevencion:[
+"Mantener separación adecuada entre plantas y eliminar residuos infectados."],
+
+ recomendacion:
+    "Retirar las hojas afectadas, mejorar la ventilación del cultivo y evitar mojar el follaje durante el riego para disminuir la propagación del hongo."
+
 
 },
 
 
 
 
-mildiu_velloso:{
 
-nombre:
-"Mildiu velloso",
+bacterial_spot_rot:{
+
+nombre:"Mancha bacteriana / pudrición bacteriana",
+
+tipo:"Enfermedad bacteriana",
+
+nivel:"Alto",
 
 descripcion:
-"Enfermedad por exceso de humedad.",
+"Infección causada por bacterias que producen lesiones en tejidos vegetales y pueden avanzar rápidamente.",
+
+
+sintomas:[
+"Manchas húmedas o oscuras",
+"Necrosis en hojas",
+"Pudrición en tejidos afectados"
+],
+
+
+causas:
+"Exceso de humedad, heridas en la planta y contaminación por herramientas.",
+
+
+acciones:[
+"Eliminar partes afectadas",
+"Desinfectar herramientas",
+"Evitar exceso de humedad"
+],
+
+
+prevencion:[
+"Usar material vegetal sano y mantener higiene del cultivo."],
 
 recomendacion:
-"Mejorar ventilación."
+    "Eliminar las partes infectadas, desinfectar las herramientas de trabajo y evitar el exceso de humedad para reducir el avance de la enfermedad."
 
 },
 
 
-
-
-podredumbre_blanca:{
-
-nombre:
-"Podredumbre blanca",
-
-descripcion:
-"Pudrición causada por hongos.",
-
-recomendacion:
-"Eliminar partes afectadas."
-
-},
 
 
 
 
 hernia_col:{
 
-nombre:
-"Hernia de la col",
+nombre:"Hernia de la col",
+
+tipo:"Enfermedad del sistema radicular",
+
+nivel:"Alto",
 
 descripcion:
-"Afecta raíces del cultivo.",
+"Enfermedad causada por un organismo del suelo que afecta las raíces de plantas de la familia de las coles.",
+
+
+sintomas:[
+"Raíces deformadas",
+"Marchitez de la planta",
+"Bajo crecimiento"
+],
+
+
+causas:
+"Suelos contaminados y condiciones de humedad excesiva.",
+
+
+acciones:[
+"Retirar plantas afectadas",
+"Evitar replantar en suelo contaminado",
+"Mejorar drenaje"
+],
+
+
+prevencion:[
+"Realizar rotación de cultivos y revisar condiciones del suelo."],
 
 recomendacion:
-"Realizar rotación."
+    "Retirar las plantas afectadas, mejorar el drenaje del suelo y realizar rotación de cultivos para disminuir la presencia del patógeno."
+
 
 },
 
 
 
 
-deficiencia_n:{
 
-nombre:
-"Deficiencia de nitrógeno",
+
+mildiu_velloso:{
+
+nombre:"Mildiu velloso",
+
+tipo:"Enfermedad fúngica",
+
+nivel:"Medio",
 
 descripcion:
-"Bajo nivel de nitrógeno.",
+"Hongo que afecta principalmente hojas produciendo manchas y crecimiento algodonoso en condiciones húmedas.",
+
+
+sintomas:[
+"Manchas amarillas",
+"Aspecto velloso debajo de hojas",
+"Debilitamiento de la planta"
+],
+
+
+causas:
+"Humedad alta, poca circulación de aire y temperaturas moderadas.",
+
+
+acciones:[
+"Reducir humedad",
+"Mejorar ventilación",
+"Eliminar hojas afectadas"
+],
+
+
+prevencion:[
+"Evitar riegos sobre las hojas y mantener espacios adecuados."],
 
 recomendacion:
-"Aplicar fertilizante adecuado."
+    "Reducir la humedad, mejorar la circulación de aire entre las plantas y eliminar las hojas afectadas para limitar el desarrollo del hongo."
+
 
 },
 
 
 
 
-deficiencia_p:{
 
-nombre:
-"Deficiencia de fósforo",
+podredumbre_negra:{
+
+nombre:"Podredumbre negra",
+
+tipo:"Enfermedad bacteriana",
+
+nivel:"Alto",
 
 descripcion:
-"Bajo nivel de fósforo.",
+"Enfermedad que provoca lesiones oscuras y deterioro de tejidos vegetales.",
+
+
+sintomas:[
+"Manchas negras en hojas",
+"Marchitez",
+"Deterioro del cultivo"
+],
+
+
+causas:
+"Presencia de bacterias favorecidas por humedad y heridas.",
+
+
+acciones:[
+"Eliminar partes enfermas",
+"No reutilizar residuos infectados",
+"Controlar humedad"
+],
+
+
+prevencion:[
+"Utilizar semillas sanas y evitar contaminación cruzada."],
+
+ recomendacion:
+    "Eliminar las plantas o tejidos enfermos, evitar la contaminación entre cultivos y utilizar semillas o plántulas sanas."
+
+
+},
+
+
+
+
+
+
+pulgon:{
+
+nombre:"Pulgón",
+
+tipo:"Plaga insecto",
+
+nivel:"Medio",
+
+descripcion:
+"Insecto pequeño que se alimenta de la savia de la planta debilitando su desarrollo.",
+
+
+sintomas:[
+"Hojas enrolladas",
+"Presencia de pequeños insectos",
+"Pegajosidad en hojas"
+],
+
+
+causas:
+"Incremento de población de insectos por falta de control biológico.",
+
+
+acciones:[
+"Revisar envés de hojas",
+"Retirar colonias pequeñas",
+"Aplicar control autorizado"
+],
+
+
+prevencion:[
+"Favorecer insectos benéficos y monitorear frecuentemente."],
 
 recomendacion:
-"Aplicar fertilización fosfatada."
+    "Realizar inspecciones frecuentes, retirar colonias pequeñas cuando sea posible y aplicar un método de control autorizado si la infestación aumenta."
+
+
+},
+
+
+
+
+
+
+ring_spot:{
+
+nombre:"Mancha en anillo",
+
+tipo:"Enfermedad foliar",
+
+nivel:"Medio",
+
+descripcion:
+"Produce lesiones circulares en las hojas que pueden afectar el desarrollo de la planta.",
+
+
+sintomas:[
+"Manchas circulares",
+"Anillos visibles en hojas",
+"Necrosis localizada"
+],
+
+
+causas:
+"Relacionada con agentes patógenos y condiciones ambientales favorables.",
+
+
+acciones:[
+"Retirar hojas afectadas",
+"Evitar propagación entre plantas",
+"Monitorear evolución"
+],
+
+
+prevencion:[
+"Mantener limpieza del cultivo y evitar exceso de humedad."],
+
+recomendacion:
+    "Retirar las hojas con lesiones, evitar la propagación entre plantas y mantener el cultivo limpio y con buena ventilación."
+
 
 }
-
 
 
 };
 
 
 
-
-
 return datos[clase] || {
 
+nombre:clase,
 
-nombre:
-clase,
+tipo:"Desconocido",
 
+nivel:"Sin determinar",
 
 descripcion:
-"Sin información.",
+"No existe información suficiente para este diagnóstico.",
 
+sintomas:[
+"Sin datos disponibles"
+],
+
+causas:
+"Se requiere análisis adicional.",
+
+acciones:[
+"Tomar una nueva fotografía",
+"Consultar información adicional"
+],
+
+prevencion:
+"Realizar seguimiento del cultivo.",
 
 recomendacion:
-"Consultar especialista."
-
+"Consultar con un especialista o tomar una nueva fotografía."
 
 };
 
