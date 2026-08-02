@@ -1,51 +1,266 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 
 function Carga() {
 
+
   const navigate = useNavigate();
 
+
   const inputFoto = useRef(null);
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
+
 
   const [imagen, setImagen] = useState("/images/logo.png");
   const [archivo, setArchivo] = useState(null);
 
-  // Abrir cámara o galería
-  function seleccionarImagen() {
+  const [camaraActiva, setCamaraActiva] = useState(false);
 
-    inputFoto.current.click();
+  const [stream, setStream] = useState(null);
+
+
+
+  // Cuando aparece el video, conectar cámara
+  useEffect(()=>{
+
+
+    if(
+
+      camaraActiva &&
+
+      videoRef.current &&
+
+      stream
+
+    ){
+
+      videoRef.current.srcObject = stream;
+
+    }
+
+
+  },[camaraActiva,stream]);
+
+
+
+
+
+  // Abrir cámara
+  async function seleccionarImagen(){
+
+
+    try{
+
+
+      const nuevoStream = await navigator.mediaDevices.getUserMedia({
+
+        video:{
+
+          facingMode:"environment"
+
+        },
+
+        audio:false
+
+      });
+
+
+
+      setStream(nuevoStream);
+
+      setCamaraActiva(true);
+
+
+
+    }catch(error){
+
+
+      console.error(
+        "Error cámara:",
+        error
+      );
+
+
+      // abrir almacenamiento
+      inputFoto.current.click();
+
+
+    }
+
 
   }
 
-  // Mostrar vista previa
-  function cargarImagen(event) {
 
-    const file = event.target.files[0];
 
-    if (!file) return;
+
+
+
+  // Capturar imagen
+  function tomarFoto(){
+
+
+    const video = videoRef.current;
+
+    const canvas = canvasRef.current;
+
+
+    if(!video) return;
+
+
+
+    canvas.width = video.videoWidth;
+
+    canvas.height = video.videoHeight;
+
+
+
+    const ctx = canvas.getContext("2d");
+
+
+
+    ctx.drawImage(
+
+      video,
+
+      0,
+
+      0,
+
+      canvas.width,
+
+      canvas.height
+
+    );
+
+
+
+    canvas.toBlob((blob)=>{
+
+
+      const foto = new File(
+
+        [blob],
+
+        "foto.jpg",
+
+        {
+          type:"image/jpeg"
+        }
+
+      );
+
+
+
+      setArchivo(foto);
+
+
+      setImagen(
+
+        URL.createObjectURL(foto)
+
+      );
+
+
+
+      cerrarCamara();
+
+
+
+    },
+
+    "image/jpeg"
+
+    );
+
+
+
+  }
+
+
+
+
+
+  function cerrarCamara(){
+
+
+    if(stream){
+
+
+      stream
+
+      .getTracks()
+
+      .forEach(
+
+        track=>track.stop()
+
+      );
+
+
+    }
+
+
+    setStream(null);
+
+    setCamaraActiva(false);
+
+
+  }
+
+
+
+
+
+
+
+  // Imagen desde almacenamiento
+  function cargarImagen(e){
+
+
+    const file=e.target.files[0];
+
+
+    if(!file)return;
+
+
 
     setArchivo(file);
 
-    const url = URL.createObjectURL(file);
 
-    setImagen(url);
+    setImagen(
+
+      URL.createObjectURL(file)
+
+    );
+
 
   }
 
-  // Enviar imagen a Diagnóstico
-  function irDiagnostico() {
 
-    if (!archivo) {
 
-      alert("Seleccione una imagen.");
+
+
+
+
+  function irDiagnostico(){
+
+
+    if(!archivo){
+
+      alert(
+        "Seleccione una imagen"
+      );
 
       return;
 
     }
 
-    navigate("/diagnostico", {
 
-      state: {
+    navigate("/diagnostico",{
+
+      state:{
 
         archivo
 
@@ -53,11 +268,19 @@ function Carga() {
 
     });
 
+
   }
+
+
+
+
+
+
 
   return (
 
     <div className="mobile-container">
+
 
       <header className="header">
 
@@ -65,19 +288,101 @@ function Carga() {
 
       </header>
 
+
+
       <main className="content">
 
+
+
         <div
+
           className="image-rounded-container"
-          onClick={seleccionarImagen}
+
+          onClick={
+            !camaraActiva
+            ? seleccionarImagen
+            : undefined
+          }
+
         >
 
-          <img
-            src={imagen}
-            alt="Vista previa"
-          />
+
+        {
+
+        camaraActiva ?
+
+
+        <video
+
+          ref={videoRef}
+
+          autoPlay
+
+          playsInline
+
+          muted
+
+          className="camera-preview"
+
+        />
+
+
+        :
+
+
+        <img
+
+          src={imagen}
+
+          alt="Vista"
+
+        />
+
+        }
+
 
         </div>
+
+
+
+
+
+        {
+
+        camaraActiva &&
+
+        <button
+
+          className="btn"
+
+          onClick={tomarFoto}
+
+        >
+
+          📷 Capturar
+
+        </button>
+
+
+        }
+
+
+
+
+
+
+        <canvas
+
+          ref={canvasRef}
+
+          hidden
+
+        />
+
+
+
+
+
 
         <input
 
@@ -87,40 +392,60 @@ function Carga() {
 
           accept="image/*"
 
-          capture="environment"
-
-          style={{ display: "none" }}
-
           onChange={cargarImagen}
+
+          hidden
 
         />
 
+
+
+
+
+
         <div className="button-row">
 
-          <button
-            className="btn"
-            onClick={() => navigate("/menu")}
-          >
-            Regresar
-          </button>
 
           <button
+
             className="btn"
-            onClick={irDiagnostico}
+
+            onClick={()=>navigate("/menu")}
+
           >
-            Diagnosticar
+
+            Regresar
+
           </button>
+
+
+
+          <button
+
+            className="btn"
+
+            onClick={irDiagnostico}
+
+          >
+
+            Diagnosticar
+
+          </button>
+
 
         </div>
 
+
+
+
       </main>
 
-      <div className="footer-bar"></div>
 
     </div>
 
   );
 
 }
+
 
 export default Carga;

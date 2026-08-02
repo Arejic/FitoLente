@@ -732,3 +732,23 @@ width:100%;
     line-height:1.7;
 
 }
+.image-rounded-container {
+
+  width:280px;
+  height:280px;
+
+  overflow:hidden;
+
+  border-radius:20px;
+
+}
+
+
+.camera-preview {
+
+  width:100%;
+  height:100%;
+
+  object-fit:cover;
+
+}
