@@ -8,18 +8,21 @@ import {
 
 import {
     registrarUsuario
-} from "../services/firestore";
+} from "../services/auth";
 
 
 function Registro(){
 
 
-    const navigate =
-        useNavigate();
+    const navigate = useNavigate();
 
 
 
     const [nombre,setNombre] =
+        useState("");
+
+
+    const [correo,setCorreo] =
         useState("");
 
 
@@ -35,9 +38,19 @@ function Registro(){
     async function crearCuenta(){
 
 
+        const nombreLimpio =
+            nombre.trim();
+
+
+        const correoLimpio =
+            correo.trim().toLowerCase();
+
+
+
         if(
-            nombre.trim()==="" ||
-            password.trim()===""
+            nombreLimpio === "" ||
+            correoLimpio === "" ||
+            password.trim() === ""
         ){
 
             alert(
@@ -49,23 +62,62 @@ function Registro(){
         }
 
 
+
+        if(
+            !correoLimpio.includes("@") ||
+            !correoLimpio.includes(".")
+        ){
+
+            alert(
+                "Ingrese un correo válido."
+            );
+
+            return;
+
+        }
+
+
+
+        if(password.length < 6){
+
+            alert(
+                "La contraseña debe tener mínimo 6 caracteres."
+            );
+
+            return;
+
+        }
+
+
+
         try{
 
 
-            await registrarUsuario({
+            console.log(
+                "Correo enviado a Firebase:",
+                correoLimpio
+            );
 
-                nombre,
+
+
+            await registrarUsuario(
+
+                correoLimpio,
 
                 password,
 
+                nombreLimpio,
+
                 perfil
 
-            });
+            );
+
 
 
             alert(
                 "Cuenta creada correctamente."
             );
+
 
 
             navigate("/");
@@ -74,12 +126,34 @@ function Registro(){
         }catch(error){
 
 
-            console.error(error);
-
-
-            alert(
-                "No fue posible crear la cuenta."
+            console.error(
+                "Error registro:",
+                error
             );
+
+
+
+            if(error.code === "auth/email-already-in-use"){
+
+                alert(
+                    "Este correo ya está registrado."
+                );
+
+            }
+            else if(error.code === "auth/invalid-email"){
+
+                alert(
+                    "El correo no es válido."
+                );
+
+            }
+            else{
+
+                alert(
+                    error.message
+                );
+
+            }
 
 
         }
@@ -99,16 +173,12 @@ function Registro(){
 
 
                 <h1>
-
                     FitoLente
-
                 </h1>
 
 
                 <h2>
-
                     Crear cuenta
-
                 </h2>
 
 
@@ -122,8 +192,27 @@ function Registro(){
                     value={nombre}
 
                     onChange={
-                        e=>
+                        e =>
                         setNombre(
+                            e.target.value
+                        )
+                    }
+
+                />
+
+
+
+                <input
+
+                    type="email"
+
+                    placeholder="Correo electrónico"
+
+                    value={correo}
+
+                    onChange={
+                        e =>
+                        setCorreo(
                             e.target.value
                         )
                     }
@@ -141,7 +230,7 @@ function Registro(){
                     value={password}
 
                     onChange={
-                        e=>
+                        e =>
                         setPassword(
                             e.target.value
                         )
@@ -156,7 +245,7 @@ function Registro(){
                     value={perfil}
 
                     onChange={
-                        e=>
+                        e =>
                         setPerfil(
                             e.target.value
                         )
@@ -170,11 +259,13 @@ function Registro(){
 
                     </option>
 
+
                     <option value="universidad">
 
                         Universidad
 
                     </option>
+
 
                 </select>
 
@@ -194,12 +285,13 @@ function Registro(){
 
 
 
+
                 <button
 
                     className="btn"
 
                     onClick={
-                        ()=>navigate("/")
+                        () => navigate("/")
                     }
 
                 >
@@ -207,6 +299,7 @@ function Registro(){
                     Regresar
 
                 </button>
+
 
 
             </main>

@@ -7,70 +7,148 @@ import {
     useNavigate
 } from "react-router-dom";
 
+
 import {
     obtenerDiagnosticosUsuario
 } from "../services/firestore";
+
 
 import {
     obtenerUsuario
 } from "../services/sesion";
 
-function Prehistorial() {
+
+
+function Prehistorial(){
 
 
     const navigate = useNavigate();
 
 
-    const [fechaFiltro, setFechaFiltro] =
+
+    const [fechaFiltro,setFechaFiltro] =
         useState("");
 
 
-    const [busqueda, setBusqueda] =
+
+    const [busqueda,setBusqueda] =
         useState("");
 
 
-    const [historial, setHistorial] =
+
+    const [historial,setHistorial] =
         useState([]);
 
 
-    const [perfil, setPerfil] =
+
+    const [perfil,setPerfil] =
         useState("");
 
 
 
-    useEffect(() => {
 
 
-        async function cargarHistorial() {
+    useEffect(()=>{
 
 
-            try {
-const usuario = obtenerUsuario();
-
-if (!usuario) {
-
-    console.error(
-        "No existe usuario en la sesión"
-    );
-
-    return;
-
-}
-
-setPerfil(
-    usuario.perfil
-        ?.toLowerCase()
-);
-
-const datos =
-    await obtenerDiagnosticosUsuario(
-        usuario.id
-    );
-
-setHistorial(datos);                
+        async function cargarHistorial(){
 
 
-            } catch(error) {
+            try{
+
+
+                const usuario =
+                    obtenerUsuario();
+
+
+
+                console.log(
+                    "Usuario sesión historial:",
+                    usuario
+                );
+
+
+
+                if(!usuario){
+
+
+                    console.error(
+                        "No existe usuario"
+                    );
+
+
+                    navigate("/");
+
+
+                    return;
+
+
+                }
+
+
+
+
+
+                setPerfil(
+                    usuario.perfil?.toLowerCase() || ""
+                );
+
+
+
+
+
+                const identificador = {
+
+
+                    uid:
+                    usuario.uid,
+
+
+                    id:
+                    usuario.id
+
+
+                };
+
+
+
+
+
+                console.log(
+                    "Buscando diagnósticos:",
+                    identificador
+                );
+
+
+
+
+
+                const datos =
+                    await obtenerDiagnosticosUsuario(
+                        identificador
+                    );
+
+
+
+
+
+                console.log(
+                    "Diagnósticos recibidos:",
+                    datos
+                );
+
+
+
+
+
+                setHistorial(
+                    datos || []
+                );
+
+
+
+
+            }catch(error){
 
 
                 console.error(
@@ -82,14 +160,17 @@ setHistorial(datos);
             }
 
 
+
         }
+
 
 
 
         cargarHistorial();
 
 
-    }, []);
+
+    },[navigate]);
 
 
 
@@ -99,10 +180,11 @@ setHistorial(datos);
 
     function regresar(){
 
+
         navigate("/menu");
 
-    }
 
+    }
 
 
 
@@ -124,6 +206,7 @@ setHistorial(datos);
                 }
 
             }
+
         );
 
 
@@ -151,6 +234,7 @@ setHistorial(datos);
                 }
 
             }
+
         );
 
 
@@ -162,110 +246,99 @@ setHistorial(datos);
 
 
 
-    const filtrados =
-        historial.filter(item=>{
+    const filtrados = historial.filter(item=>{
 
 
-            const texto =
-                busqueda.toLowerCase();
-
-
-
-            const diagnostico =
-                (
-                    item.resultado || ""
-                )
-                .toLowerCase();
+        const texto =
+            busqueda.toLowerCase();
 
 
 
-            const coincideBusqueda =
-                diagnostico.includes(texto);
+        const diagnostico =
+            (
+                item.resultado || ""
+            )
+            .toLowerCase();
 
 
 
 
-
-            const coincideFecha =
-            (()=>{
-
-
-                if(fechaFiltro===""){
-
-                    return true;
-
-                }
+        const coincideBusqueda =
+            diagnostico.includes(texto);
 
 
 
-                if(!item.fecha){
 
-                    return false;
-
-                }
+        let coincideFecha = true;
 
 
 
-                const fechaReporte =
-                    new Date(item.fecha);
+
+        if(fechaFiltro !== ""){
 
 
-
-                const año =
-                    fechaReporte.getFullYear();
+            if(!item.fecha){
 
 
-
-                const mes =
-                    String(
-                        fechaReporte.getMonth()+1
-                    )
-                    .padStart(2,"0");
+                coincideFecha = false;
 
 
+            }else{
 
-                const dia =
-                    String(
-                        fechaReporte.getDate()
-                    )
-                    .padStart(2,"0");
+
+                const fecha =
+                    new Date(
+                        item.fecha
+                    );
 
 
 
                 const fechaLocal =
-                    `${año}-${mes}-${dia}`;
+                    `${fecha.getFullYear()}-${
+                    String(
+                        fecha.getMonth()+1
+                    )
+                    .padStart(2,"0")}-${
+                    String(
+                        fecha.getDate()
+                    )
+                    .padStart(2,"0")}`;
 
 
 
-                return fechaLocal === fechaFiltro;
-
-
-            })();
-
+                coincideFecha =
+                    fechaLocal === fechaFiltro;
 
 
 
-
-            return (
-
-                coincideBusqueda
-                &&
-                coincideFecha
-
-            );
+            }
 
 
-        });
-
-
+        }
 
 
 
 
 
-    return (
+        return (
+            coincideBusqueda &&
+            coincideFecha
+        );
+
+
+    });
+
+
+
+
+
+
+
+    return(
+
 
         <div className="mobile-container">
+
 
 
             <header className="header">
@@ -277,9 +350,7 @@ setHistorial(datos);
 
 
                 <p>
-
                     Historial de diagnósticos
-
                 </p>
 
 
@@ -289,9 +360,8 @@ setHistorial(datos);
 
 
 
+
             <main className="content">
-
-
 
 
 
@@ -313,17 +383,18 @@ setHistorial(datos);
 
 
 
-
                         <input
 
                             type="text"
 
                             className="input-buscar"
 
+                            placeholder="Buscar diagnóstico"
+
                             value={busqueda}
 
                             onChange={
-                                e =>
+                                e=>
                                 setBusqueda(
                                     e.target.value
                                 )
@@ -352,7 +423,7 @@ setHistorial(datos);
                             value={fechaFiltro}
 
                             onChange={
-                                e =>
+                                e=>
                                 setFechaFiltro(
                                     e.target.value
                                 )
@@ -381,7 +452,7 @@ setHistorial(datos);
                 {
 
 
-                filtrados.length === 0 ?
+                filtrados.length===0 ?
 
 
                 (
@@ -401,13 +472,16 @@ setHistorial(datos);
                     (item,index)=>(
 
 
-
                     <div
+
+                        key={
+                            item.id || index
+                        }
 
 
                         className={
 
-                            perfil === "estudiante"
+                            perfil==="estudiante"
 
                             ?
 
@@ -418,13 +492,6 @@ setHistorial(datos);
                             "history-card universidad-card"
 
                         }
-
-
-
-                        key={
-                            item.id || index
-                        }
-
 
 
                         onDoubleClick={
@@ -450,34 +517,43 @@ setHistorial(datos);
 
 
 
-
                             <span className="history-title">
 
 
                                 <strong>
 
                                     {
-                                        item.resultado
+                                        item.resultado ||
+                                        "Sin diagnóstico"
                                     }
 
                                 </strong>
 
 
 
-
                                 <br/>
 
+
                                 Confianza:
+
 
                                 {" "}
 
 
-                                {
-                                    Math.round(
-                                        item.confianza
-                                    )
-                                }%
 
+                                {
+                                    item.confianza
+                                    ?
+
+                                    Math.round(
+                                        item.confianza * 100
+                                    )
+
+                                    :
+
+                                    0
+
+                                }%
 
 
 
@@ -485,16 +561,12 @@ setHistorial(datos);
 
 
 
-
                                 {
-
                                     item.fecha &&
-
                                     new Date(
                                         item.fecha
                                     )
                                     .toLocaleString()
-
                                 }
 
 
@@ -516,9 +588,7 @@ setHistorial(datos);
                             className="btn-download"
 
 
-
                             title="Descargar reporte"
-
 
 
                             onClick={
@@ -543,9 +613,8 @@ setHistorial(datos);
 
 
 
-
-
                     </div>
+
 
 
                 ))
@@ -553,8 +622,8 @@ setHistorial(datos);
                 }
 
 
-                </div>
 
+                </div>
 
 
 
@@ -579,18 +648,13 @@ setHistorial(datos);
                     </button>
 
 
-
                 </div>
 
 
 
 
 
-
             </main>
-
-
-
 
 
 
@@ -605,6 +669,7 @@ setHistorial(datos);
 
 
 }
+
 
 
 export default Prehistorial;

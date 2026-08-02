@@ -4,37 +4,53 @@ import {
     getFirestore 
 } from "firebase/firestore";
 
+import {
+    getStorage
+} from "firebase/storage";
+
+import {
+    getAuth
+} from "firebase/auth";
+
 
 
 const firebaseConfig = {
 
-  apiKey: "AIzaSyDerpGcS24YmMUpLzx9LD3-Y4Kt24G5l4g",
+    apiKey: "AIzaSyCGm3rYRUQa9chbdP32vggxb0KconEf_-s",
 
-  authDomain: "fitolente.firebaseapp.com",
+    authDomain:
+    "fitolente-9b607.firebaseapp.com",
 
-  projectId: "fitolente",
+    projectId:
+    "fitolente-9b607",
 
-  storageBucket: "fitolente.firebasestorage.app",
+    storageBucket:
+    "fitolente-9b607.firebasestorage.app",
 
-  messagingSenderId: "619347552103",
+    messagingSenderId:
+    "1063025997839",
 
-  appId: "1:619347552103:web:66588d013a6a88f81c31c2",
+    appId:
+    "1:1063025997839:web:6af9858ea579ebf318cb7a"
 
 };
 
 
 
-
-const app =
-initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 
 
 
-const db =
-getFirestore(app);
+const db = getFirestore(app);
+
+const storage = getStorage(app);
+
+const auth = getAuth(app);
 
 
 
 export {
-    db
+    db,
+    storage,
+    auth
 };

@@ -9,8 +9,9 @@ import {
 
 
 import {
-    buscarUsuario
-} from "../services/firestore";
+    iniciarSesion,
+    obtenerPerfil
+} from "../services/auth";
 
 
 
@@ -22,7 +23,7 @@ function Login(){
 
 
 
-    const [nombre,setNombre] =
+    const [correo,setCorreo] =
         useState("");
 
 
@@ -38,14 +39,17 @@ function Login(){
 
 
 
-
-
     async function ingresar(){
 
 
+        const correoLimpio =
+            correo.trim().toLowerCase();
+
+
+
         if(
-            nombre === "" ||
-            password === ""
+            correoLimpio === "" ||
+            password.trim() === ""
         ){
 
             alert(
@@ -58,36 +62,113 @@ function Login(){
 
 
 
+        if(
+            !correoLimpio.includes("@")
+        ){
+
+            alert(
+                "Ingrese un correo válido"
+            );
+
+            return;
+
+        }
+
+
+
 
         try{
 
 
-            const usuario =
-                await buscarUsuario(
+            console.log(
+                "Login con:",
+                correoLimpio
+            );
 
-                    nombre,
 
-                    password,
 
-                    perfil
+            const usuarioAuth =
+
+                await iniciarSesion(
+
+                    correoLimpio,
+
+                    password
 
                 );
 
 
 
 
-            if(!usuario){
+
+            const perfilUsuario =
+
+                await obtenerPerfil(
+
+                    usuarioAuth.uid
+
+                );
+
+
+
+
+
+            if(!perfilUsuario){
 
 
                 alert(
-                    "Usuario o contraseña incorrectos"
+                    "No existe información del usuario"
                 );
-
 
                 return;
 
             }
 
+
+
+
+
+            if(
+                perfilUsuario.perfil !== perfil
+            ){
+
+                alert(
+                    "El perfil seleccionado no coincide"
+                );
+
+                return;
+
+            }
+
+
+
+
+
+
+            const usuario = {
+
+
+                id:
+                perfilUsuario.id,
+
+
+                uid:
+                usuarioAuth.uid,
+
+
+                nombre:
+                perfilUsuario.nombre,
+
+
+                perfil:
+                perfilUsuario.perfil,
+
+
+                email:
+                perfilUsuario.email
+
+
+            };
 
 
 
@@ -109,17 +190,22 @@ function Login(){
 
 
 
+
+
         }catch(error){
 
 
             console.error(
+
                 "Error iniciando sesión:",
+
                 error
+
             );
 
 
             alert(
-                "Error conectando con Firestore"
+                "Correo o contraseña incorrectos"
             );
 
 
@@ -135,167 +221,140 @@ function Login(){
 
 
 
-    return(
+return(
 
 
-        <div className="mobile-container">
+<div className="mobile-container">
 
 
-            <main className="content">
+<main className="content">
 
 
+<h1>
+FitoLente
+</h1>
 
-                <h1>
 
-                    FitoLente
+<h2>
+Inicio de sesión
+</h2>
 
-                </h1>
 
 
 
-                <h2>
 
-                    Inicio de sesión
+<input
 
-                </h2>
+type="email"
 
+placeholder="Correo electrónico"
 
+value={correo}
 
+onChange={
+e=>
+setCorreo(
+e.target.value
+)
+}
 
+/>
 
 
-                <input
 
-                    type="text"
 
-                    placeholder="Nombre"
 
-                    value={nombre}
+<input
 
-                    onChange={
-                        e =>
-                        setNombre(
-                            e.target.value
-                        )
-                    }
+type="password"
 
-                />
+placeholder="Contraseña"
 
+value={password}
 
+onChange={
+e=>
+setPassword(
+e.target.value
+)
+}
 
+/>
 
 
 
-                <input
 
-                    type="password"
 
-                    placeholder="Contraseña"
+<select
 
-                    value={password}
+value={perfil}
 
-                    onChange={
-                        e =>
-                        setPassword(
-                            e.target.value
-                        )
-                    }
+onChange={
+e=>
+setPerfil(
+e.target.value
+)
+}
 
-                />
+>
 
 
+<option value="estudiante">
+Estudiante
+</option>
 
 
+<option value="universidad">
+Universidad
+</option>
 
 
+</select>
 
-                <select
 
-                    value={perfil}
 
-                    onChange={
-                        e =>
-                        setPerfil(
-                            e.target.value
-                        )
-                    }
 
-                >
 
 
-                    <option value="estudiante">
+<button
 
-                        Estudiante
+className="btn"
 
-                    </option>
+onClick={ingresar}
 
+>
 
+Ingresar
 
-                    <option value="universidad">
+</button>
 
-                        Universidad
 
-                    </option>
 
 
 
-                </select>
+<button
 
+className="btn"
 
+onClick={
+()=>navigate("/registro")
+}
 
+>
 
+Crear cuenta
 
+</button>
 
 
 
-                <button
+</main>
 
-                    className="btn"
 
-                    onClick={ingresar}
+</div>
 
-                >
 
-                    Ingresar
-
-
-                </button>
-
-
-
-
-
-
-
-
-                <button
-
-                    className="btn"
-
-                    onClick={
-                        () =>
-                        navigate("/registro")
-                    }
-
-                >
-
-                    Crear cuenta
-
-
-                </button>
-
-
-
-
-
-
-            </main>
-
-
-        </div>
-
-
-    );
+);
 
 
 }
