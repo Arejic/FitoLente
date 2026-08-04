@@ -9,6 +9,7 @@ import ReporteUniversidad from "../components/ReporteUniversidad";
 
 function Reporte(){
 
+
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -16,6 +17,7 @@ function Reporte(){
 
 
     const state = location.state || {};
+
 
 
     const desdeHistorial =
@@ -47,6 +49,7 @@ function Reporte(){
         state.resultado
     ){
 
+
         imagen =
             state.imagen;
 
@@ -70,6 +73,7 @@ function Reporte(){
 
         fecha =
             new Date().toISOString();
+
 
     }
 
@@ -100,7 +104,7 @@ function Reporte(){
 
 
         imagen =
-            state.reporte.imagen ||
+            state.reporte.imagenURL ||
             null;
 
 
@@ -119,9 +123,13 @@ function Reporte(){
 
 
         fecha =
-            state.reporte.fecha;
+            state.reporte.fecha ||
+            new Date().toISOString();
+
 
     }
+
+
 
 
 
@@ -143,6 +151,9 @@ function Reporte(){
 
 
 
+
+
+
     if(!resultado){
 
         return null;
@@ -153,16 +164,26 @@ function Reporte(){
 
 
 
+
+
+
     const perfilTexto =
         perfil
-        ?.trim()
+        ?.toString()
+        .trim()
         .toLowerCase();
 
 
 
 
+
     const esPrimaria =
-        perfilTexto === "estudiante";
+        perfilTexto === "estudiante" ||
+        perfilTexto === "alumno";
+
+
+
+
 
 
 
@@ -172,10 +193,12 @@ function Reporte(){
     );
 
 
+
     console.log(
-        "Reporte estudiante:",
-        esPrimaria
+        "Imagen reporte:",
+        imagen
     );
+
 
 
 
@@ -185,6 +208,10 @@ function Reporte(){
         obtenerInformacion(
             resultado.clase
         );
+
+
+
+
 
 
 
@@ -218,7 +245,10 @@ function Reporte(){
 
         fecha
 
+
     };
+
+
 
 
 
@@ -229,13 +259,18 @@ function Reporte(){
 
         if(desdeHistorial){
 
-            navigate("/prehistorial");
+
+            navigate(
+                "/prehistorial"
+            );
 
 
         }else{
 
 
-            navigate("/carga");
+            navigate(
+                "/carga"
+            );
 
 
         }
@@ -247,9 +282,14 @@ function Reporte(){
 
 
 
+
+
+
     return (
 
+
         <div className="pagina-reporte">
+
 
 
             <div ref={reporteRef}>
@@ -257,23 +297,31 @@ function Reporte(){
 
                 {
 
-                    esPrimaria
-
-                    ?
-
-                    <ReportePrimaria
-                        reporte={datosReporte}
-                    />
+                esPrimaria
 
 
-                    :
+                ?
 
 
-                    <ReporteUniversidad
-                        reporte={datosReporte}
-                    />
+                <ReportePrimaria
+
+                    reporte={datosReporte}
+
+                />
+
+
+                :
+
+
+                <ReporteUniversidad
+
+                    reporte={datosReporte}
+
+                />
+
 
                 }
+
 
 
             </div>
@@ -282,7 +330,9 @@ function Reporte(){
 
 
 
+
             <div className="acciones">
+
 
 
                 <button
@@ -297,7 +347,10 @@ function Reporte(){
 
                     Descargar PDF
 
+
                 </button>
+
+
 
 
 
@@ -312,17 +365,28 @@ function Reporte(){
 
                     Regresar
 
+
                 </button>
+
 
 
             </div>
 
 
+
+
+
         </div>
+
 
     );
 
+
 }
+
+
+
+
 
 
 
@@ -331,122 +395,193 @@ function Reporte(){
 function obtenerInformacion(clase){
 
 
+
     const informacion = {
+
 
 
         sana:{
 
-            nombre:"Planta sana",
+
+            nombre:
+                "Planta sana",
+
 
             descripcion:
-            "La planta no presenta síntomas visibles de enfermedades, plagas o deficiencias nutricionales.",
+                "La planta no presenta síntomas visibles de enfermedades, plagas o deficiencias nutricionales.",
+
 
             recomendacion:
-            "Continúe con los cuidados habituales y realice inspecciones periódicas."
+                "Continúe con los cuidados habituales y realice inspecciones periódicas."
+
 
         },
+
+
+
 
 
         trips:{
 
-            nombre:"Trips",
+
+            nombre:
+                "Trips",
+
 
             descripcion:
-            "Plaga que afecta los tejidos de las hojas y reduce el desarrollo de la planta.",
+                "Plaga que afecta los tejidos de las hojas y reduce el desarrollo de la planta.",
+
 
             recomendacion:
-            "Aplicar control biológico o tratamiento autorizado."
+                "Aplicar control biológico o tratamiento autorizado."
+
 
         },
+
+
+
 
 
         pulgon:{
 
-            nombre:"Pulgón",
+
+            nombre:
+                "Pulgón",
+
 
             descripcion:
-            "Insecto chupador que debilita la planta al alimentarse de la savia.",
+                "Insecto chupador que debilita la planta al alimentarse de la savia.",
+
 
             recomendacion:
-            "Realizar monitoreo y aplicar medidas de control."
+                "Realizar monitoreo y aplicar medidas de control."
+
 
         },
+
+
+
 
 
         alternaria:{
 
-            nombre:"Alternaria",
+
+            nombre:
+                "Alternaria",
+
 
             descripcion:
-            "Enfermedad causada por hongos que produce manchas oscuras en las hojas.",
+                "Enfermedad causada por hongos que produce manchas oscuras en las hojas.",
+
 
             recomendacion:
-            "Retirar hojas afectadas y controlar humedad."
+                "Retirar hojas afectadas y controlar humedad."
+
 
         },
+
+
+
 
 
         mildiu_velloso:{
 
-            nombre:"Mildiu velloso",
+
+            nombre:
+                "Mildiu velloso",
+
 
             descripcion:
-            "Enfermedad favorecida por humedad elevada y poca ventilación.",
+                "Enfermedad favorecida por humedad elevada y poca ventilación.",
+
 
             recomendacion:
-            "Mejorar ventilación y aplicar fungicida autorizado."
+                "Mejorar ventilación y aplicar fungicida autorizado."
+
 
         },
+
+
+
 
 
         podredumbre_blanca:{
 
-            nombre:"Podredumbre blanca",
+
+            nombre:
+                "Podredumbre blanca",
+
 
             descripcion:
-            "Enfermedad causada por hongos que provoca pudrición de tejidos.",
+                "Enfermedad causada por hongos que provoca pudrición de tejidos.",
+
 
             recomendacion:
-            "Eliminar partes afectadas y reducir exceso de humedad."
+                "Eliminar partes afectadas y reducir exceso de humedad."
+
 
         },
+
+
+
 
 
         hernia_col:{
 
-            nombre:"Hernia de la col",
+
+            nombre:
+                "Hernia de la col",
+
 
             descripcion:
-            "Enfermedad que afecta principalmente las raíces del cultivo.",
+                "Enfermedad que afecta principalmente las raíces del cultivo.",
+
 
             recomendacion:
-            "Realizar rotación de cultivos y mejorar manejo del suelo."
+                "Realizar rotación de cultivos y mejorar manejo del suelo."
+
 
         },
+
+
+
 
 
         deficiencia_n:{
 
-            nombre:"Deficiencia de nitrógeno",
+
+            nombre:
+                "Deficiencia de nitrógeno",
+
 
             descripcion:
-            "La planta presenta baja disponibilidad de nitrógeno.",
+                "La planta presenta baja disponibilidad de nitrógeno.",
+
 
             recomendacion:
-            "Aplicar fertilización nitrogenada según necesidad."
+                "Aplicar fertilización nitrogenada según necesidad."
+
 
         },
 
 
+
+
+
         deficiencia_p:{
 
-            nombre:"Deficiencia de fósforo",
+
+            nombre:
+                "Deficiencia de fósforo",
+
 
             descripcion:
-            "La planta presenta deficiencia de fósforo.",
+                "La planta presenta deficiencia de fósforo.",
+
 
             recomendacion:
-            "Aplicar fertilización fosfatada adecuada."
+                "Aplicar fertilización fosfatada adecuada."
+
 
         }
 
@@ -455,23 +590,30 @@ function obtenerInformacion(clase){
 
 
 
+
+
+
     return informacion[clase] || {
 
 
-        nombre:clase,
+        nombre:
+            clase,
 
 
         descripcion:
-        "No existe información disponible para este diagnóstico.",
+            "No existe información disponible para este diagnóstico.",
 
 
         recomendacion:
-        "Consulte a un especialista."
+            "Consulte a un especialista."
+
 
     };
 
 
 }
+
+
 
 
 

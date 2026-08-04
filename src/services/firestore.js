@@ -16,17 +16,23 @@ import {
 
 
 import {
+
     db
+
 } from "./firebase";
 
 
 import {
+
     subirImagen
+
 } from "./storage";
 
 
 import {
+
     obtenerUsuario
+
 } from "./sesion";
 
 
@@ -51,7 +57,7 @@ export async function obtenerPerfilUsuario(uid){
 
             where(
                 "uid",
-                "==" ,
+                "==",
                 uid
             )
 
@@ -64,6 +70,7 @@ export async function obtenerPerfilUsuario(uid){
 
 
 
+
         if(snapshot.empty){
 
             return null;
@@ -72,13 +79,16 @@ export async function obtenerPerfilUsuario(uid){
 
 
 
+
         return {
+
 
             id:
             snapshot.docs[0].id,
 
 
             ...snapshot.docs[0].data()
+
 
         };
 
@@ -88,8 +98,11 @@ export async function obtenerPerfilUsuario(uid){
 
 
         console.error(
+
             "Error obteniendo perfil:",
+
             error
+
         );
 
 
@@ -107,17 +120,22 @@ export async function obtenerPerfilUsuario(uid){
 
 
 
+
 // =================================
 // GUARDAR DIAGNOSTICO
 // =================================
 
 export async function guardarDiagnostico(
+
     datos,
+
     imagen
+
 ){
 
 
     try{
+
 
 
         const usuario =
@@ -125,20 +143,36 @@ export async function guardarDiagnostico(
 
 
 
+
+
         console.log(
+
             "Usuario guardando diagnóstico:",
+
             usuario
+
         );
+
+
+
 
 
 
         if(!usuario){
 
+
             throw new Error(
+
                 "No existe sesión activa"
+
             );
 
+
         }
+
+
+
+
 
 
 
@@ -146,17 +180,25 @@ export async function guardarDiagnostico(
 
 
 
+
+
+
+        // =============================
+        // SUBIR IMAGEN A SUPABASE
+        // =============================
+
         if(imagen){
 
 
             imagenURL =
-                await subirImagen(
 
-                    imagen,
+            await subirImagen(
 
-                    usuario.uid
+                imagen,
 
-                );
+                usuario.uid
+
+            );
 
 
         }
@@ -165,44 +207,56 @@ export async function guardarDiagnostico(
 
 
 
+
+
+
+        // =============================
+        // REPORTE FIRESTORE
+        // =============================
+
         const diagnostico = {
 
 
             ...datos,
 
 
+
             imagenURL,
 
 
 
-            // ID documento usuarios
             usuarioId:
+
             usuario.id,
 
 
 
-            // UID Firebase Auth
             uid:
+
             usuario.uid,
 
 
 
             usuario:
-            usuario.nombre,
+
+            usuario.nombre || "",
 
 
 
             perfil:
-            usuario.perfil,
+
+            usuario.perfil || "",
 
 
 
             email:
-            usuario.email,
+
+            usuario.email || "",
 
 
 
             fecha:
+
             new Date().toISOString()
 
 
@@ -212,26 +266,41 @@ export async function guardarDiagnostico(
 
 
 
+
+
         console.log(
-            "Diagnóstico guardado:",
+
+            "Guardando en Firestore:",
+
             diagnostico
+
         );
 
 
 
 
 
+
+
         const docRef =
-            await addDoc(
 
-                collection(
-                    db,
-                    "diagnosticos"
-                ),
+        await addDoc(
 
-                diagnostico
+            collection(
 
-            );
+                db,
+
+                "diagnosticos"
+
+            ),
+
+            diagnostico
+
+        );
+
+
+
+
 
 
 
@@ -239,26 +308,39 @@ export async function guardarDiagnostico(
 
 
             id:
+
             docRef.id,
 
 
+
             imagenURL
+
 
 
         };
 
 
 
+
+
+
+
     }catch(error){
 
 
+
         console.error(
+
             "Error guardando diagnóstico:",
+
             error
+
         );
 
 
+
         throw error;
+
 
 
     }
@@ -278,16 +360,27 @@ export async function guardarDiagnostico(
 // HISTORIAL USUARIO
 // =================================
 
-export async function obtenerDiagnosticosUsuario(usuario){
+export async function obtenerDiagnosticosUsuario(
+
+    usuario
+
+){
+
 
 
     try{
 
 
+
         console.log(
+
             "Buscando historial:",
+
             usuario
+
         );
+
+
 
 
 
@@ -295,35 +388,52 @@ export async function obtenerDiagnosticosUsuario(usuario){
 
 
 
+
+
+
+
         // Buscar por UID Firebase
+
         if(usuario.uid){
 
 
-            const qUid =
-                query(
+            const qUid = query(
 
-                    collection(
-                        db,
-                        "diagnosticos"
-                    ),
+                collection(
 
-                    where(
-                        "uid",
-                        "==",
-                        usuario.uid
-                    )
+                    db,
 
-                );
+                    "diagnosticos"
+
+                ),
+
+
+                where(
+
+                    "uid",
+
+                    "==",
+
+                    usuario.uid
+
+                )
+
+            );
+
 
 
 
             const snapUid =
-                await getDocs(qUid);
+
+            await getDocs(qUid);
+
 
 
 
             documentos.push(
+
                 ...snapUid.docs
+
             );
 
 
@@ -333,36 +443,56 @@ export async function obtenerDiagnosticosUsuario(usuario){
 
 
 
-        // Buscar por ID documento usuario
+
+
+
+        // Buscar por ID usuario
+
         if(usuario.id){
 
 
-            const qId =
-                query(
 
-                    collection(
-                        db,
-                        "diagnosticos"
-                    ),
+            const qId = query(
 
-                    where(
-                        "usuarioId",
-                        "==",
-                        usuario.id
-                    )
+                collection(
 
-                );
+                    db,
+
+                    "diagnosticos"
+
+                ),
+
+
+                where(
+
+                    "usuarioId",
+
+                    "==",
+
+                    usuario.id
+
+                )
+
+            );
+
+
 
 
 
             const snapId =
-                await getDocs(qId);
+
+            await getDocs(qId);
+
+
 
 
 
             documentos.push(
+
                 ...snapId.docs
+
             );
+
 
 
         }
@@ -373,7 +503,11 @@ export async function obtenerDiagnosticosUsuario(usuario){
 
 
 
-        const resultado = Array.from(
+
+        const resultado =
+
+        Array.from(
+
 
             new Map(
 
@@ -385,11 +519,14 @@ export async function obtenerDiagnosticosUsuario(usuario){
 
                     {
 
+
                         id:
+
                         doc.id,
 
 
                         ...doc.data()
+
 
                     }
 
@@ -398,7 +535,10 @@ export async function obtenerDiagnosticosUsuario(usuario){
 
             ).values()
 
+
         );
+
+
 
 
 
@@ -406,9 +546,15 @@ export async function obtenerDiagnosticosUsuario(usuario){
 
 
         console.log(
+
             "Historial encontrado:",
+
             resultado
+
         );
+
+
+
 
 
 
@@ -416,22 +562,32 @@ export async function obtenerDiagnosticosUsuario(usuario){
 
 
 
+
+
+
     }catch(error){
 
 
+
         console.error(
+
             "Error historial:",
+
             error
+
         );
 
 
+
         throw error;
+
 
 
     }
 
 
 }
+
 
 
 
@@ -450,53 +606,78 @@ export async function obtenerTodosDiagnosticos(){
     try{
 
 
-        const q =
-            query(
 
-                collection(
-                    db,
-                    "diagnosticos"
-                ),
+        const q = query(
+
+            collection(
+
+                db,
+
+                "diagnosticos"
+
+            ),
+
+            orderBy(
+
+                "fecha",
+
+                "desc"
+
+            )
+
+        );
 
 
-                orderBy(
-                    "fecha",
-                    "desc"
-                )
-
-            );
 
 
 
         const snapshot =
-            await getDocs(q);
+
+        await getDocs(q);
+
+
+
 
 
 
         return snapshot.docs.map(doc=>({
 
 
+
             id:
+
             doc.id,
 
 
+
             ...doc.data()
+
 
 
         }));
 
 
 
+
+
+
+
     }catch(error){
 
 
+
         console.error(
+
             "Error obteniendo diagnósticos:",
+
             error
+
         );
 
 
+
         throw error;
+
 
 
     }

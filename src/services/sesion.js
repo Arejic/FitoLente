@@ -1,10 +1,18 @@
 export function obtenerUsuario(){
 
-    return JSON.parse(
-        localStorage.getItem("usuario")
-    );
+    const usuario =
+        sessionStorage.getItem("usuario");
+
+
+    if(!usuario){
+        return null;
+    }
+
+
+    return JSON.parse(usuario);
 
 }
+
 
 export function obtenerUsuarioId(){
 
@@ -14,6 +22,7 @@ export function obtenerUsuarioId(){
 
 }
 
+
 export function obtenerPerfil(){
 
     const usuario = obtenerUsuario();
@@ -22,14 +31,16 @@ export function obtenerPerfil(){
 
 }
 
+
 export function estaAutenticado(){
 
     return obtenerUsuario() !== null;
 
 }
 
+
 export function cerrarSesion(){
 
-    localStorage.removeItem("usuario");
+    sessionStorage.removeItem("usuario");
 
 }

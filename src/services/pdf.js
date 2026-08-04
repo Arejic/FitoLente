@@ -1,21 +1,42 @@
-import html2canvas from "html2canvas";
-import { jsPDF } from "jspdf";
+import html2pdf from "html2pdf.js";
 
-export async function generarPDF(reporteRef){
+export function generarPDF(reporteRef){
 
-    const canvas = await html2canvas(reporteRef.current,{
-        scale:2
-    });
+    const opciones = {
 
-    const img = canvas.toDataURL("image/png");
+        margin: 10,
 
-    const pdf = new jsPDF("p","mm","a4");
+        filename: "Reporte_FitoLente.pdf",
 
-    const ancho=190;
-    const alto=(canvas.height*ancho)/canvas.width;
+        image: {
+            type: "jpeg",
+            quality: 1
+        },
 
-    pdf.addImage(img,"PNG",10,10,ancho,alto);
+        html2canvas: {
+            scale: 3,
+            useCORS: true,
+            backgroundColor: "#ffffff"
+        },
 
-    pdf.save("Reporte_FitoLente.pdf");
+        jsPDF: {
+            unit: "mm",
+            format: "a4",
+            orientation: "portrait"
+        },
+
+        pagebreak: {
+            mode: ["css", "legacy", "avoid-all"]
+        }
+
+    };
+
+    html2pdf()
+
+        .set(opciones)
+
+        .from(reporteRef.current)
+
+        .save();
 
 }

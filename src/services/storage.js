@@ -1,35 +1,37 @@
-import {
-
-    ref,
-
-    uploadBytes,
-
-    getDownloadURL
-
-} from "firebase/storage";
+import { supabase } from "./supabase";
 
 
-import {
-    storage
-} from "./firebase";
-
-
+// =================================
+// SUBIR IMAGEN A SUPABASE STORAGE
+// =================================
 
 export async function subirImagen(
     archivo,
     usuarioId
 ){
 
-
     try{
 
 
+        if(!archivo){
+
+            throw new Error(
+                "No existe archivo de imagen"
+            );
+
+        }
+
+
+
+        const extension =
+            archivo.name
+            .split(".")
+            .pop();
+
+
+
         const nombreArchivo =
-            Date.now()
-            +
-            "_"
-            +
-            archivo.name;
+            `${crypto.randomUUID()}.${extension}`;
 
 
 
@@ -38,32 +40,76 @@ export async function subirImagen(
 
 
 
-        const imagenRef =
-            ref(
-                storage,
-                ruta
-            );
 
 
+        const {
+            error
+        } =
+        await supabase.storage
 
-        await uploadBytes(
+        .from("imagenes")
 
-            imagenRef,
+        .upload(
 
-            archivo
+            ruta,
+
+            archivo,
+
+            {
+                cacheControl:"3600",
+
+                upsert:false
+
+            }
 
         );
 
 
 
-        const url =
-            await getDownloadURL(
-                imagenRef
-            );
+
+
+        if(error){
+
+            throw error;
+
+        }
 
 
 
-        return url;
+
+
+
+
+        const {
+            data
+        } =
+        supabase.storage
+
+        .from("imagenes")
+
+        .getPublicUrl(
+
+            ruta
+
+        );
+
+
+
+
+
+        console.log(
+            "Imagen subida:",
+            data.publicUrl
+        );
+
+
+
+
+
+        return data.publicUrl;
+
+
+
 
 
 
@@ -71,12 +117,17 @@ export async function subirImagen(
 
 
         console.error(
+
             "Error subiendo imagen:",
+
             error
+
         );
 
 
+
         throw error;
+
 
 
     }

@@ -11,9 +11,9 @@ function MenuU(){
 
 
     const usuario =
-        JSON.parse(
-            localStorage.getItem("usuario")
-        );
+    JSON.parse(
+        sessionStorage.getItem("usuario")
+    );
 
 
 
@@ -38,8 +38,8 @@ function MenuU(){
     function cambiarUsuario(){
 
 
-        localStorage.removeItem(
-            "usuario"
+        sessionStorage.removeItem(
+        "usuario"
         );
 
 

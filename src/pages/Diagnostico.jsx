@@ -291,23 +291,27 @@ const esEstudiante =
 
 
 
-          await guardarDiagnostico({
+          const guardado =
+    await guardarDiagnostico(
 
-    resultado:
-        resultado.clase,
+        {
+            resultado:
+                resultado.clase,
 
-    confianza:
-        resultado.confianza,
+            confianza:
+                resultado.confianza,
 
-    descripcion:
-        datos.descripcion,
+            descripcion:
+                datos.descripcion,
 
-    recomendacion:
-        datos.recomendacion,
+            recomendacion:
+                datos.recomendacion
+        },
 
-    imagen
+        location.state.archivo
 
-});
+    );
+
 
 
 
@@ -323,11 +327,10 @@ const esEstudiante =
 
         state:{
 
+        imagen:
+            guardado.imagenURL,
 
-            imagen,
-
-
-            resultado,
+        resultado,
 
 
             nombre:

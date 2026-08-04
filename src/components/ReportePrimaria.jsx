@@ -74,12 +74,10 @@ function ReportePrimaria({ reporte }) {
 
 
                     <img
-
-                        src={reporte.imagen}
-
-                        alt="Cultivo"
-
-                    />
+    src={reporte.imagen}
+    alt="Cultivo"
+    crossOrigin="anonymous"
+/>
 
 
                 </div>

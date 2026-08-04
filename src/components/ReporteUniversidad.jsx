@@ -131,12 +131,10 @@ function ReporteUniversidad({ reporte }) {
                 <div className="imagen">
 
                     <img
-
-                        src={reporte.imagen}
-
-                        alt="Cultivo"
-
-                    />
+    src={reporte.imagen}
+    alt="Cultivo"
+    crossOrigin="anonymous"
+/>
 
                 </div>
 

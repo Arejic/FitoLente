@@ -174,14 +174,12 @@ function Login(){
 
 
 
-            localStorage.setItem(
+            sessionStorage.clear();
 
-                "usuario",
-
-                JSON.stringify(usuario)
-
-            );
-
+sessionStorage.setItem(
+    "usuario",
+    JSON.stringify(usuario)
+);
 
 
 
