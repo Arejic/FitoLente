@@ -97,10 +97,10 @@ export async function subirImagen(
 
 
 
-        console.log(
-            "Imagen subida:",
-            data.publicUrl
-        );
+        //console.log(
+        //    "Imagen subida:",
+        //    data.publicUrl
+        //);
 
 
 

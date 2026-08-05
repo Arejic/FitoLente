@@ -100,17 +100,21 @@ function Registro(){
 
 
 
-            await registrarUsuario(
+           await registrarUsuario(
 
-                correoLimpio,
+    correoLimpio,
 
-                password,
+    password,
 
-                nombreLimpio,
+    {
 
-                perfil
+        nombre: nombreLimpio,
 
-            );
+        perfil: perfil
+
+    }
+
+);
 
 
 

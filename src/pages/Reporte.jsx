@@ -1,27 +1,53 @@
-import { useRef, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import {
+    useRef,
+    useEffect
+} from "react";
 
-import { generarPDF } from "../services/pdf";
 
-import ReportePrimaria from "../components/ReportePrimaria";
-import ReporteUniversidad from "../components/ReporteUniversidad";
+import {
+    useLocation,
+    useNavigate
+} from "react-router-dom";
+
+
+import {
+    generarPDF
+} from "../services/pdf";
+
+
+import ReportePrimaria
+    from "../components/ReportePrimaria";
+
+
+import ReporteUniversidad
+    from "../components/ReporteUniversidad";
+
+
+
 
 
 function Reporte(){
 
 
-    const navigate = useNavigate();
-    const location = useLocation();
-
-    const reporteRef = useRef(null);
+    const navigate =
+        useNavigate();
 
 
-    const state = location.state || {};
+    const location =
+        useLocation();
+
+
+    const reporteRef =
+        useRef(null);
 
 
 
-    const desdeHistorial =
-        Boolean(state.reporte);
+
+
+    const state =
+        location.state || {};
+
+
 
 
 
@@ -32,132 +58,76 @@ function Reporte(){
 
 
 
-    let imagen = null;
-    let resultado = null;
-    let usuario = null;
-    let perfil = null;
-    let fecha = null;
 
 
-
-    // =========================
-    // REPORTE NUEVO
-    // =========================
-
-    if(
-        state.imagen &&
-        state.resultado
-    ){
-
-
-        imagen =
-            state.imagen;
-
-
-        resultado =
-            state.resultado;
-
-
-
-        usuario =
-            usuarioActual?.nombre ||
-            "Usuario desconocido";
-
-
-
-        perfil =
-            usuarioActual?.perfil ||
-            "Sin perfil";
-
-
-
-        fecha =
-            new Date().toISOString();
-
-
-    }
+    let reporte = null;
 
 
 
 
 
-    // =========================
-    // REPORTE HISTORIAL
-    // =========================
+    // ============================
+    // REPORTE RECIBIDO
+    // NUEVO O HISTORIAL
+    // ============================
+
+
 
     if(state.reporte){
 
 
-        resultado = {
+        reporte = {
 
-            clase:
+
+            resultado:
+
                 state.reporte.resultado,
 
 
+
             confianza:
+
                 Number(
-                    state.reporte.confianza
-                )
+                    state.reporte.confianza || 0
+                ),
+
+
+
+            imagen:
+
+                state.reporte.imagenURL ||
+                state.reporte.imagen ||
+                null,
+
+
+
+            usuario:
+
+                state.reporte.usuario ||
+                usuarioActual?.nombre ||
+                "Usuario FitoLente",
+
+
+
+            perfil:
+
+                state.reporte.perfil ||
+                usuarioActual?.perfil ||
+                "Sin perfil",
+
+
+
+            fecha:
+
+                state.reporte.fecha ||
+                new Date()
+                .toISOString()
+
+
 
         };
 
 
-
-        imagen =
-            state.reporte.imagenURL ||
-            null;
-
-
-
-        usuario =
-            state.reporte.usuario ||
-            "Usuario desconocido";
-
-
-
-        perfil =
-            state.reporte.perfil ||
-            usuarioActual?.perfil ||
-            "Sin perfil";
-
-
-
-        fecha =
-            state.reporte.fecha ||
-            new Date().toISOString();
-
-
-    }
-
-
-
-
-
-
-
-    useEffect(()=>{
-
-
-        if(!resultado){
-
-            navigate("/menu");
-
-        }
-
-
-    },[resultado,navigate]);
-
-
-
-
-
-
-
-
-    if(!resultado){
-
-        return null;
-
     }
 
 
@@ -167,219 +137,303 @@ function Reporte(){
 
 
 
-    const perfilTexto =
-        perfil
-        ?.toString()
-        .trim()
-        .toLowerCase();
+
+useEffect(()=>{
 
 
+    if(!reporte){
 
 
-
-    const esPrimaria =
-        perfilTexto === "estudiante" ||
-        perfilTexto === "alumno";
-
-
-
-
-
-
-
-    console.log(
-        "Perfil recibido:",
-        perfil
-    );
-
-
-
-    console.log(
-        "Imagen reporte:",
-        imagen
-    );
-
-
-
-
-
-
-    const info =
-        obtenerInformacion(
-            resultado.clase
-        );
-
-
-
-
-
-
-
-    const datosReporte = {
-
-
-        nombre:
-            info.nombre,
-
-
-        descripcion:
-            info.descripcion,
-
-
-        recomendacion:
-            info.recomendacion,
-
-
-        confianza:
-            resultado.confianza,
-
-
-        usuario,
-
-
-        perfil,
-
-
-        imagen,
-
-
-        fecha
-
-
-    };
-
-
-
-
-
-
-
-    function regresar(){
-
-
-        if(desdeHistorial){
-
-
-            navigate(
-                "/prehistorial"
-            );
-
-
-        }else{
-
-
-            navigate(
-                "/carga"
-            );
-
-
-        }
+        navigate("/menu");
 
 
     }
 
 
 
+},[reporte,navigate]);
 
 
 
 
 
-    return (
 
 
-        <div className="pagina-reporte">
 
+if(!reporte){
 
 
-            <div ref={reporteRef}>
+    return null;
 
 
-                {
+}
 
-                esPrimaria
 
 
-                ?
 
 
-                <ReportePrimaria
 
-                    reporte={datosReporte}
 
-                />
+const perfilTexto =
 
+reporte.perfil
+?.toString()
+.trim()
+.toLowerCase();
 
-                :
 
 
-                <ReporteUniversidad
 
-                    reporte={datosReporte}
 
-                />
 
+const esPrimaria =
 
-                }
+perfilTexto === "estudiante" ||
+perfilTexto === "alumno";
 
 
 
-            </div>
 
 
 
 
+const info =
 
+obtenerInformacion(
+    reporte.resultado
+);
 
-            <div className="acciones">
 
 
 
-                <button
 
-                    className="btn"
 
-                    onClick={
-                        ()=>generarPDF(reporteRef)
-                    }
 
-                >
 
-                    Descargar PDF
+const datosReporte = {
 
 
-                </button>
 
+nombre:
 
+    info.nombre,
 
 
 
+descripcion:
 
-                <button
+    info.descripcion,
 
-                    className="btn"
 
-                    onClick={regresar}
 
-                >
+recomendacion:
 
-                    Regresar
+    info.recomendacion,
 
 
-                </button>
 
+confianza:
 
+    reporte.confianza,
 
-            </div>
 
 
+usuario:
 
+    reporte.usuario,
 
 
-        </div>
 
+perfil:
 
+    reporte.perfil,
+
+
+
+imagen:
+
+    reporte.imagen,
+
+
+
+fecha:
+
+    reporte.fecha
+
+
+
+};
+
+
+
+
+
+
+
+
+function regresar(){
+
+
+const origen =
+
+location.state?.origen;
+
+
+
+
+
+if(origen === "prehistorial"){
+
+
+    navigate(
+        "/prehistorial"
     );
+
+
+}
+
+else if(origen === "diagnostico"){
+
+
+    navigate(
+        "/carga"
+    );
+
+
+}
+
+else{
+
+
+    navigate(
+        "/carga"
+    );
+
+
+}
+
+
+
+}
+
+
+
+
+
+
+
+
+
+return(
+
+
+<div className="pagina-reporte">
+
+
+
+
+
+
+<div ref={reporteRef}>
+
+
+
+{
+
+esPrimaria
+
+?
+
+<ReportePrimaria
+
+reporte={datosReporte}
+
+/>
+
+
+
+:
+
+
+<ReporteUniversidad
+
+reporte={datosReporte}
+
+/>
+
+
+
+}
+
+
+
+</div>
+
+
+
+
+
+
+
+
+<div className="acciones">
+
+
+
+
+
+<button
+
+className="btn"
+
+onClick={
+()=>generarPDF(reporteRef)
+}
+
+>
+
+Descargar PDF
+
+</button>
+
+
+
+
+
+
+
+
+<button
+
+className="btn"
+
+onClick={regresar}
+
+>
+
+Regresar
+
+</button>
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+</div>
+
+
+
+);
 
 
 }
@@ -396,222 +450,255 @@ function obtenerInformacion(clase){
 
 
 
-    const informacion = {
+const informacion = {
 
 
 
-        sana:{
+sana:{
 
 
-            nombre:
-                "Planta sana",
+nombre:
 
+"Planta sana",
 
-            descripcion:
-                "La planta no presenta síntomas visibles de enfermedades, plagas o deficiencias nutricionales.",
 
+descripcion:
 
-            recomendacion:
-                "Continúe con los cuidados habituales y realice inspecciones periódicas."
+"La planta no presenta síntomas visibles de enfermedades, plagas o deficiencias nutricionales.",
 
 
-        },
+recomendacion:
 
+"Continúe con los cuidados habituales y realice inspecciones periódicas."
 
+},
 
 
 
-        trips:{
 
 
-            nombre:
-                "Trips",
 
+trips:{
 
-            descripcion:
-                "Plaga que afecta los tejidos de las hojas y reduce el desarrollo de la planta.",
 
+nombre:
 
-            recomendacion:
-                "Aplicar control biológico o tratamiento autorizado."
+"Trips",
 
 
-        },
+descripcion:
 
+"Plaga que afecta los tejidos de las hojas y reduce el desarrollo de la planta.",
 
 
+recomendacion:
 
+"Aplicar control biológico o tratamiento autorizado."
 
-        pulgon:{
+},
 
 
-            nombre:
-                "Pulgón",
 
 
-            descripcion:
-                "Insecto chupador que debilita la planta al alimentarse de la savia.",
 
 
-            recomendacion:
-                "Realizar monitoreo y aplicar medidas de control."
+pulgon:{
 
 
-        },
+nombre:
 
+"Pulgón",
 
 
+descripcion:
 
+"Insecto chupador que debilita la planta al alimentarse de la savia.",
 
-        alternaria:{
 
+recomendacion:
 
-            nombre:
-                "Alternaria",
+"Realizar monitoreo y aplicar medidas de control."
 
+},
 
-            descripcion:
-                "Enfermedad causada por hongos que produce manchas oscuras en las hojas.",
 
 
-            recomendacion:
-                "Retirar hojas afectadas y controlar humedad."
 
 
-        },
 
+alternaria:{
 
 
+nombre:
 
+"Alternaria",
 
-        mildiu_velloso:{
 
+descripcion:
 
-            nombre:
-                "Mildiu velloso",
+"Enfermedad causada por hongos que produce manchas oscuras en hojas.",
 
 
-            descripcion:
-                "Enfermedad favorecida por humedad elevada y poca ventilación.",
+recomendacion:
 
+"Retirar hojas afectadas y controlar humedad."
 
-            recomendacion:
-                "Mejorar ventilación y aplicar fungicida autorizado."
+},
 
 
-        },
 
 
 
 
+mildiu_velloso:{
 
-        podredumbre_blanca:{
 
+nombre:
 
-            nombre:
-                "Podredumbre blanca",
+"Mildiu velloso",
 
 
-            descripcion:
-                "Enfermedad causada por hongos que provoca pudrición de tejidos.",
+descripcion:
 
+"Enfermedad favorecida por humedad elevada y poca ventilación.",
 
-            recomendacion:
-                "Eliminar partes afectadas y reducir exceso de humedad."
 
+recomendacion:
 
-        },
+"Mejorar ventilación y reducir humedad."
 
+},
 
 
 
 
-        hernia_col:{
 
 
-            nombre:
-                "Hernia de la col",
+podredumbre_blanca:{
 
 
-            descripcion:
-                "Enfermedad que afecta principalmente las raíces del cultivo.",
+nombre:
 
+"Podredumbre blanca",
 
-            recomendacion:
-                "Realizar rotación de cultivos y mejorar manejo del suelo."
 
+descripcion:
 
-        },
+"Enfermedad causada por hongos que provoca pudrición de tejidos.",
 
 
+recomendacion:
 
+"Eliminar partes afectadas y reducir humedad."
 
+},
 
-        deficiencia_n:{
 
 
-            nombre:
-                "Deficiencia de nitrógeno",
 
 
-            descripcion:
-                "La planta presenta baja disponibilidad de nitrógeno.",
 
+hernia_col:{
 
-            recomendacion:
-                "Aplicar fertilización nitrogenada según necesidad."
 
+nombre:
 
-        },
+"Hernia de la col",
 
 
+descripcion:
 
+"Enfermedad que afecta principalmente las raíces del cultivo.",
 
 
-        deficiencia_p:{
+recomendacion:
 
+"Realizar rotación de cultivos y mejorar manejo del suelo."
 
-            nombre:
-                "Deficiencia de fósforo",
+},
 
 
-            descripcion:
-                "La planta presenta deficiencia de fósforo.",
 
 
-            recomendacion:
-                "Aplicar fertilización fosfatada adecuada."
 
 
-        }
+deficiencia_n:{
 
 
-    };
+nombre:
 
+"Deficiencia de nitrógeno",
 
 
+descripcion:
 
+"La planta presenta baja disponibilidad de nitrógeno.",
 
 
-    return informacion[clase] || {
+recomendacion:
 
+"Aplicar fertilización nitrogenada adecuada."
 
-        nombre:
-            clase,
+},
 
 
-        descripcion:
-            "No existe información disponible para este diagnóstico.",
 
 
-        recomendacion:
-            "Consulte a un especialista."
 
 
-    };
+deficiencia_p:{
+
+
+nombre:
+
+"Deficiencia de fósforo",
+
+
+descripcion:
+
+"La planta presenta deficiencia de fósforo.",
+
+
+recomendacion:
+
+"Aplicar fertilización fosfatada adecuada."
+
+}
+
+
+
+
+
+};
+
+
+
+
+
+
+return informacion[clase] || {
+
+
+nombre:
+
+clase,
+
+
+descripcion:
+
+"No existe información disponible para este diagnóstico.",
+
+
+recomendacion:
+
+"Consultar con un especialista."
+
+};
+
 
 
 }
+
 
 
 

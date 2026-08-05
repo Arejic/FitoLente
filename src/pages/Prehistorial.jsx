@@ -3,14 +3,16 @@ import {
     useState
 } from "react";
 
+
 import {
     useNavigate
 } from "react-router-dom";
 
 
 import {
-    obtenerDiagnosticosUsuario
-} from "../services/firestore";
+    obtenerDiagnosticosAPI,
+    eliminarDiagnosticoAPI
+} from "../services/api";
 
 
 import {
@@ -18,11 +20,21 @@ import {
 } from "../services/sesion";
 
 
+import {
+    FiDownload,
+    FiTrash2
+} from "react-icons/fi";
+
+
+
+
 
 function Prehistorial(){
 
 
-    const navigate = useNavigate();
+    const navigate =
+        useNavigate();
+
 
 
 
@@ -48,13 +60,17 @@ function Prehistorial(){
 
 
 
+
+
+
     useEffect(()=>{
 
 
-        async function cargarHistorial(){
+        async function cargar(){
 
 
             try{
+
 
 
                 const usuario =
@@ -62,19 +78,18 @@ function Prehistorial(){
 
 
 
+
+
                 console.log(
-                    "Usuario sesión historial:",
+                    "Usuario historial:",
                     usuario
                 );
 
 
 
+
+
                 if(!usuario){
-
-
-                    console.error(
-                        "No existe usuario"
-                    );
 
 
                     navigate("/");
@@ -89,51 +104,76 @@ function Prehistorial(){
 
 
 
+
                 setPerfil(
-                    usuario.perfil?.toLowerCase() || ""
+
+                    usuario.perfil
+                    ?.toString()
+                    .toLowerCase()
+                    ||
+                    ""
+
                 );
 
 
 
 
 
-                const identificador = {
 
 
-                    uid:
-                    usuario.uid,
 
-
-                    id:
-                    usuario.id
-
-
-                };
+                const todos =
+                    await obtenerDiagnosticosAPI();
 
 
 
 
 
-                console.log(
-                    "Buscando diagnósticos:",
-                    identificador
-                );
+
+
+                const identificadorUsuario =
+
+                    usuario.uid ||
+                    usuario.id;
+
+
 
 
 
 
 
                 const datos =
-                    await obtenerDiagnosticosUsuario(
-                        identificador
+
+                    todos.filter(
+
+                        item =>
+
+                        item.usuarioId === identificadorUsuario
+
                     );
 
 
 
 
 
+
+
                 console.log(
-                    "Diagnósticos recibidos:",
+                    "Todos:",
+                    todos
+                );
+
+
+
+                console.log(
+                    "Usuario buscado:",
+                    identificadorUsuario
+                );
+
+
+
+                console.log(
+                    "Historial filtrado:",
                     datos
                 );
 
@@ -141,19 +181,26 @@ function Prehistorial(){
 
 
 
+
+
                 setHistorial(
-                    datos || []
+                    datos
                 );
 
 
 
 
-            }catch(error){
+
+            }
+            catch(error){
 
 
                 console.error(
-                    "Error cargando historial:",
+
+                    "Error cargando historial",
+
                     error
+
                 );
 
 
@@ -166,7 +213,9 @@ function Prehistorial(){
 
 
 
-        cargarHistorial();
+
+        cargar();
+
 
 
 
@@ -178,13 +227,120 @@ function Prehistorial(){
 
 
 
-    function regresar(){
 
 
-        navigate("/menu");
+
+
+
+
+    async function eliminarReporte(item){
+
+
+        const confirmar =
+
+            window.confirm(
+
+                "¿Desea eliminar este reporte?"
+
+            );
+
+
+
+
+        if(!confirmar){
+
+            return;
+
+        }
+
+
+
+
+
+
+
+        try{
+
+
+
+            await eliminarDiagnosticoAPI(
+
+                item.id
+
+            );
+
+
+
+
+
+
+
+            setHistorial(
+
+                lista =>
+
+                lista.filter(
+
+                    reporte =>
+
+                    reporte.id !== item.id
+
+                )
+
+            );
+
+
+
+
+
+        }
+        catch(error){
+
+
+
+            console.error(
+
+                "Error eliminando reporte:",
+
+                error
+
+            );
+
+
+
+            alert(
+
+                "No se pudo eliminar el reporte"
+
+            );
+
+
+
+        }
+
 
 
     }
+
+
+
+
+
+
+
+
+
+    function regresar(){
+
+
+        navigate(
+            "/menu"
+        );
+
+
+    }
+
+
 
 
 
@@ -196,21 +352,36 @@ function Prehistorial(){
 
 
         navigate(
+
             "/reporte",
+
             {
 
                 state:{
 
+
+                    origen:
+
+                    "prehistorial",
+
+
+
                     reporte:item
+
 
                 }
 
+
             }
+
 
         );
 
 
+
     }
+
+
 
 
 
@@ -221,19 +392,33 @@ function Prehistorial(){
     function descargarReporte(item){
 
 
+
         navigate(
+
             "/reporte",
+
             {
 
                 state:{
 
+
+                    origen:
+
+                    "prehistorial",
+
+
+
                     reporte:item,
+
 
                     descargar:true
 
+
                 }
 
+
             }
+
 
         );
 
@@ -246,25 +431,57 @@ function Prehistorial(){
 
 
 
-    const filtrados = historial.filter(item=>{
+
+
+    const filtrados =
+
+
+    historial.filter(item=>{
+
+
+
+
 
 
         const texto =
-            busqueda.toLowerCase();
 
+            busqueda
 
-
-        const diagnostico =
-            (
-                item.resultado || ""
-            )
             .toLowerCase();
 
 
 
 
+
+
+
+        const diagnostico =
+
+            (
+
+                item.resultado ||
+
+                ""
+
+            )
+
+            .toLowerCase();
+
+
+
+
+
+
+
         const coincideBusqueda =
+
+
             diagnostico.includes(texto);
+
+
+
+
+
 
 
 
@@ -274,41 +491,61 @@ function Prehistorial(){
 
 
 
-        if(fechaFiltro !== ""){
 
 
-            if(!item.fecha){
+
+        if(fechaFiltro){
 
 
-                coincideFecha = false;
 
+            if(item.fecha){
 
-            }else{
 
 
                 const fecha =
+
                     new Date(
+
                         item.fecha
+
                     );
 
 
 
-                const fechaLocal =
-                    `${fecha.getFullYear()}-${
+
+
+
+                const fechaTexto =
+
+                `${fecha.getFullYear()}-${
                     String(
                         fecha.getMonth()+1
                     )
-                    .padStart(2,"0")}-${
+                    .padStart(2,"0")
+                }-${
                     String(
                         fecha.getDate()
                     )
-                    .padStart(2,"0")}`;
+                    .padStart(2,"0")
+                }`;
+
+
+
+
 
 
 
                 coincideFecha =
-                    fechaLocal === fechaFiltro;
 
+                    fechaTexto === fechaFiltro;
+
+
+
+            }
+            else{
+
+
+                coincideFecha=false;
 
 
             }
@@ -320,10 +557,17 @@ function Prehistorial(){
 
 
 
+
         return (
+
             coincideBusqueda &&
+
             coincideFecha
+
         );
+
+
+
 
 
     });
@@ -334,10 +578,20 @@ function Prehistorial(){
 
 
 
+
+
+
+
+
+
     return(
 
 
+
         <div className="mobile-container">
+
+
+
 
 
 
@@ -345,12 +599,17 @@ function Prehistorial(){
 
 
                 <h1>
+
                     FitoLente
+
                 </h1>
 
 
+
                 <p>
+
                     Historial de diagnósticos
+
                 </p>
 
 
@@ -361,7 +620,15 @@ function Prehistorial(){
 
 
 
+
+
+
             <main className="content">
+
+
+
+
+
 
 
 
@@ -369,36 +636,43 @@ function Prehistorial(){
 
 
 
+
+
+
                     <div className="search-box">
-
-
-
-                        <button
-                            className="btn-buscar"
-                        >
-
-                            Buscar
-
-                        </button>
 
 
 
                         <input
 
+
                             type="text"
+
 
                             className="input-buscar"
 
+
                             placeholder="Buscar diagnóstico"
+
+
 
                             value={busqueda}
 
+
+
                             onChange={
-                                e=>
+
+                                e =>
+
                                 setBusqueda(
+
                                     e.target.value
+
                                 )
+
                             }
+
+
 
                         />
 
@@ -410,29 +684,48 @@ function Prehistorial(){
 
 
 
+
+
+
+
                     <label className="btn-calendar">
 
 
                         📅
 
 
+
                         <input
+
 
                             type="date"
 
+
                             value={fechaFiltro}
 
+
+
                             onChange={
-                                e=>
+
+                                e =>
+
                                 setFechaFiltro(
+
                                     e.target.value
+
                                 )
+
                             }
+
+
 
                         />
 
 
+
                     </label>
+
+
 
 
 
@@ -445,23 +738,31 @@ function Prehistorial(){
 
 
 
+
                 <div className="history-list">
+
+
+
+
 
 
 
                 {
 
 
-                filtrados.length===0 ?
+                filtrados.length === 0
 
 
-                (
+                ?
 
-                    <p>
-                        No hay reportes.
-                    </p>
 
-                )
+
+                <p>
+
+                    No hay reportes.
+
+                </p>
+
 
 
                 :
@@ -469,14 +770,23 @@ function Prehistorial(){
 
 
                 filtrados.map(
+
                     (item,index)=>(
+
+
 
 
                     <div
 
+
                         key={
-                            item.id || index
+
+                            item.id ||
+
+                            index
+
                         }
+
 
 
                         className={
@@ -494,9 +804,15 @@ function Prehistorial(){
                         }
 
 
+
+
+
                         onDoubleClick={
+
                             ()=>abrirReporte(item)
+
                         }
+
 
 
                     >
@@ -505,7 +821,12 @@ function Prehistorial(){
 
 
 
+
+
                         <div className="history-info">
+
+
+
 
 
                             <span className="icon-documento">
@@ -517,43 +838,70 @@ function Prehistorial(){
 
 
 
+
+
+
                             <span className="history-title">
+
 
 
                                 <strong>
 
+
                                     {
-                                        item.resultado ||
-                                        "Sin diagnóstico"
+
+                                    item.resultado ||
+
+                                    "Sin diagnóstico"
+
                                     }
 
+
+
                                 </strong>
+
+
 
 
 
                                 <br/>
 
 
-                                Confianza:
 
+
+
+                                Confianza:
 
                                 {" "}
 
 
 
                                 {
-                                    item.confianza
-                                    ?
 
-                                    Math.round(
-                                        item.confianza * 100
+                                item.confianza
+
+                                ?
+
+                                Math.round(
+
+                                    Number(
+
+                                        item.confianza
+
                                     )
 
-                                    :
+                                    *
 
-                                    0
+                                    100
+
+                                )
+
+                                :
+
+                                0
 
                                 }%
+
 
 
 
@@ -561,17 +909,35 @@ function Prehistorial(){
 
 
 
+
+
+
+
                                 {
-                                    item.fecha &&
-                                    new Date(
-                                        item.fecha
-                                    )
-                                    .toLocaleString()
+
+                                item.fecha &&
+
+
+                                new Date(
+
+                                    item.fecha
+
+                                )
+
+                                .toLocaleString()
+
+
+
                                 }
 
 
 
+
+
                             </span>
+
+
+
 
 
                         </div>
@@ -582,33 +948,99 @@ function Prehistorial(){
 
 
 
-                        <button
 
 
-                            className="btn-download"
+                        <div className="acciones-historial">
 
 
-                            title="Descargar reporte"
+
+                            <button
 
 
-                            onClick={
-                                e=>{
+                                className="btn-download"
 
-                                    e.stopPropagation();
 
-                                    descargarReporte(item);
+                                title="Abrir reporte"
+
+
+
+                                onClick={
+
+                                    (e)=>{
+
+
+                                        e.stopPropagation();
+
+
+                                        descargarReporte(item);
+
+
+                                    }
 
                                 }
 
-                            }
 
 
-                        >
-
-                            ↓
+                            >
 
 
-                        </button>
+                                <FiDownload />
+
+
+
+                            </button>
+
+
+
+
+
+
+
+                            <button
+
+
+                                className="btn-delete"
+
+
+                                title="Eliminar reporte"
+
+
+
+                                onClick={
+
+                                    (e)=>{
+
+
+                                        e.stopPropagation();
+
+
+                                        eliminarReporte(item);
+
+
+                                    }
+
+                                }
+
+
+
+                            >
+
+
+                                <FiTrash2 />
+
+
+
+                            </button>
+
+
+
+
+
+
+                        </div>
+
+
+
 
 
 
@@ -617,13 +1049,25 @@ function Prehistorial(){
 
 
 
-                ))
+
+                    )
+
+
+                )
+
+
 
                 }
 
 
 
+
+
+
+
                 </div>
+
+
 
 
 
@@ -634,13 +1078,19 @@ function Prehistorial(){
                 <div className="footer-controls">
 
 
+
                     <button
+
 
                         className="btn-regresar"
 
+
                         onClick={regresar}
 
+
+
                     >
+
 
                         Regresar
 
@@ -648,7 +1098,11 @@ function Prehistorial(){
                     </button>
 
 
+
+
                 </div>
+
+
 
 
 
@@ -658,7 +1112,13 @@ function Prehistorial(){
 
 
 
+
+
+
+
             <div className="footer-bar"></div>
+
+
 
 
 
@@ -669,6 +1129,8 @@ function Prehistorial(){
 
 
 }
+
+
 
 
 
