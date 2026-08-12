@@ -1,7 +1,16 @@
+/*
+ * Proyecto: FitoLente
+ * Autores:
+ * Josue Arturo Juarez Rangel
+ * Areli Jimenez Contreras
+ * Juan Manuel Valerio Astorga
+ *
+ * Universidad Tecnológica de Tula-Tepeji
+ */
 import { initializeApp } from "firebase/app";
 
-import { 
-    getFirestore 
+import {
+    getFirestore
 } from "firebase/firestore";
 
 import {
@@ -16,36 +25,52 @@ import {
 
 const firebaseConfig = {
 
-    apiKey: "AIzaSyCGm3rYRUQa9chbdP32vggxb0KconEf_-s",
+
+    apiKey:
+    "AIzaSyCGm3rYRUQa9chbdP32vggxb0KconEf_-s",
+
 
     authDomain:
     "fitolente-9b607.firebaseapp.com",
 
+
     projectId:
     "fitolente-9b607",
+
 
     storageBucket:
     "fitolente-9b607.firebasestorage.app",
 
+
     messagingSenderId:
     "1063025997839",
 
+
     appId:
     "1:1063025997839:web:6af9858ea579ebf318cb7a"
+
 
 };
 
 
 
-const app = initializeApp(firebaseConfig);
+const app =
+initializeApp(firebaseConfig);
 
 
 
-const db = getFirestore(app);
+const db =
+getFirestore(app);
 
-const storage = getStorage(app);
 
-const auth = getAuth(app);
+
+const storage =
+getStorage(app);
+
+
+
+const auth =
+getAuth(app);
 
 
 

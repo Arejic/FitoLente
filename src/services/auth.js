@@ -1,100 +1,80 @@
+/*
+ * Proyecto: FitoLente
+ * Autores:
+ * Josue Arturo Juarez Rangel
+ * Areli Jimenez Contreras
+ * Juan Manuel Valerio Astorga
+ *
+ * Universidad Tecnológica de Tula-Tepeji
+ */
 import {
-
-createUserWithEmailAndPassword,
-
-signInWithEmailAndPassword,
-
-signOut
-
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    signOut
 } from "firebase/auth";
 
 
 import {
-
-auth,
-
-db
-
-} from "./firebase";
-
-
-import {
-
-addDoc,
-
-collection,
-
-query,
-
-where,
-
-getDocs
-
+    doc,
+    getDoc,
+    setDoc
 } from "firebase/firestore";
 
 
+import {
+    auth,
+    db
+} from "./firebase";
 
 
 
-// ===============================
-// REGISTRO
-// ===============================
 
+// ==========================
+// REGISTRO USUARIO
+// ==========================
 
 export async function registrarUsuario(
-email,
-password,
-nombre,
-perfil
+    correo,
+    password,
+    datos
 ){
 
+    const resultado =
 
-const resultado =
-
-await createUserWithEmailAndPassword(
-
-auth,
-
-email,
-
-password
-
-);
+        await createUserWithEmailAndPassword(
+            auth,
+            correo,
+            password
+        );
 
 
-
-const uid =
-resultado.user.uid;
+    const uid =
+        resultado.user.uid;
 
 
 
-await addDoc(
+    await setDoc(
 
-collection(
-db,
-"usuarios"
-),
+        doc(
+            db,
+            "usuarios",
+            uid
+        ),
 
-{
+        {
 
+            uid,
 
-uid,
+            email: correo,
 
-nombre,
+            ...datos
 
-perfil,
+        }
 
-email
-
-
-}
-
-);
+    );
 
 
-
-return resultado.user;
-
+    return resultado.user;
 
 }
 
@@ -102,37 +82,25 @@ return resultado.user;
 
 
 
-
-// ===============================
+// ==========================
 // LOGIN
-// ===============================
-
+// ==========================
 
 export async function iniciarSesion(
-
-email,
-
-password
-
+    correo,
+    password
 ){
 
+    const resultado =
 
-const resultado =
-
-await signInWithEmailAndPassword(
-
-auth,
-
-email,
-
-password
-
-);
+        await signInWithEmailAndPassword(
+            auth,
+            correo,
+            password
+        );
 
 
-
-return resultado.user;
-
+    return resultado.user;
 
 }
 
@@ -140,59 +108,52 @@ return resultado.user;
 
 
 
-
-// ===============================
+// ==========================
 // PERFIL
-// ===============================
-
+// ==========================
 
 export async function obtenerPerfil(uid){
 
+    console.log("Buscando UID:", uid);
 
-const q = query(
+    const referencia =
+        doc(
+            db,
+            "usuarios",
+            uid
+        );
 
-collection(
-db,
-"usuarios"
-),
+    const documento =
+        await getDoc(
+            referencia
+        );
 
+    console.log(
+        "¿Existe documento?:",
+        documento.exists()
+    );
 
-where(
-"uid",
-"==",
-uid
-)
+    if(
+        !documento.exists()
+    ){
 
+        return null;
 
-);
+    }
 
+    console.log(
+        "Datos documento:",
+        documento.data()
+    );
 
+    return {
 
-const snap =
-await getDocs(q);
+        id:
+        documento.id,
 
+        ...documento.data()
 
-
-if(snap.empty){
-
-return null;
-
-}
-
-
-
-return {
-
-
-id:
-snap.docs[0].id,
-
-
-...snap.docs[0].data()
-
-
-};
-
+    };
 
 }
 
@@ -200,11 +161,14 @@ snap.docs[0].id,
 
 
 
+// ==========================
+// CERRAR SESIÓN
+// ==========================
 
 export async function cerrarSesion(){
 
-
-await signOut(auth);
-
+    await signOut(
+        auth
+    );
 
 }

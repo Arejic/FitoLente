@@ -1,3 +1,12 @@
+/*
+ * Proyecto: FitoLente
+ * Autores:
+ * Josue Arturo Juarez Rangel
+ * Areli Jimenez Contreras
+ * Juan Manuel Valerio Astorga
+ *
+ * Universidad Tecnológica de Tula-Tepeji
+ */
 import {
     useState
 } from "react";
@@ -100,17 +109,21 @@ function Registro(){
 
 
 
-            await registrarUsuario(
+           await registrarUsuario(
 
-                correoLimpio,
+    correoLimpio,
 
-                password,
+    password,
 
-                nombreLimpio,
+    {
 
-                perfil
+        nombre: nombreLimpio,
 
-            );
+        perfil: perfil
+
+    }
+
+);
 
 
 

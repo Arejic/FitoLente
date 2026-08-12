@@ -1,3 +1,12 @@
+/*
+ * Proyecto: FitoLente
+ * Autores:
+ * Josue Arturo Juarez Rangel
+ * Areli Jimenez Contreras
+ * Juan Manuel Valerio Astorga
+ *
+ * Universidad Tecnológica de Tula-Tepeji
+ */
 .reporte-primaria{
 
     width:90%;
@@ -214,4 +223,45 @@
 
     line-height:1.6;
 
+}
+
+
+/* Separación entre botones */
+
+.acciones-historial{
+
+    display:flex;
+
+    gap:18px;
+
+    align-items:center;
+
+}
+
+.btn-download,
+.btn-delete{
+
+    width:40px;
+    height:40px;
+
+    border:none;
+    border-radius:50%;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    background:#2e8b57;
+    color:white;
+
+    cursor:pointer;
+
+    font-size:20px;
+}
+
+.btn-download svg,
+.btn-delete svg{
+
+    width:20px;
+    height:20px;
 }

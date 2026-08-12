@@ -1,3 +1,12 @@
+/*
+ * Proyecto: FitoLente
+ * Autores:
+ * Josue Arturo Juarez Rangel
+ * Areli Jimenez Contreras
+ * Juan Manuel Valerio Astorga
+ *
+ * Universidad Tecnológica de Tula-Tepeji
+ */
 import { supabase } from "./supabase";
 
 
@@ -97,10 +106,10 @@ export async function subirImagen(
 
 
 
-        console.log(
-            "Imagen subida:",
-            data.publicUrl
-        );
+        //console.log(
+        //    "Imagen subida:",
+        //    data.publicUrl
+        //);
 
 
 

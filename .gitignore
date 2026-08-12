@@ -1,3 +1,14 @@
+# Dependencias Node
+node_modules/
+
+# Vite
+.vite/
+dist/
+
+# Variables privadas
+.env
+.env.*
+
 # Logs
 *.log
 
@@ -15,3 +26,4 @@ __pycache__/
 # Modelos temporales
 *.keras
 *.h5
+backend/*firebase-adminsdk*.json
