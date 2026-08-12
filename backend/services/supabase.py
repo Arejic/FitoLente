@@ -1,3 +1,12 @@
+"""
+Proyecto: FitoLente
+Autores:
+Josue Arturo Juarez Rangel
+Areli Jimenez Contreras
+Juan Manuel Valerio Astorga
+
+Universidad Tecnológica de Tula-Tepeji
+"""
 from supabase import create_client
 from dotenv import load_dotenv
 import os
